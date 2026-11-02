@@ -89,12 +89,8 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
   transition:box-shadow .4s,transform .15s;
 }
 .dial:active{transform:scale(.94)}
-.dial svg{width:52px;height:52px;display:block;overflow:visible}
-.dial .ring{transform-origin:0 0;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
-.dial:active .ring{transform:rotate(45deg)}
-.dial .core{fill:var(--st);transition:fill .4s}
-.dial .waves{fill:none;stroke:var(--chip,#fff);stroke-width:1.8;stroke-linecap:round}
-.dial .dotc{fill:var(--chip,#fff)}
+.dial svg{width:36px;height:36px;display:block;overflow:visible}
+.dial .pw{fill:none;stroke:var(--st);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .4s}
 .dial:focus-visible,.cancel:focus-visible{outline:3px solid #fff;outline-offset:4px}
 .hint{margin:0;max-width:34ch;padding:7px 14px;border-radius:14px;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline);text-align:center;font:400 12px/1.5 var(--sans);color:var(--ink)}
 
@@ -141,12 +137,28 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
   .meta.flip,.hub.flip{animation:none}
   .needle{transition:none}
 }
+
+.right{display:flex;align-items:center;gap:12px}
+.moon{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline);color:#fff;font:500 11px var(--mono);letter-spacing:.12em;text-shadow:none;-webkit-tap-highlight-color:transparent}
+.moon svg{width:14px;height:14px;fill:currentColor}
+.moon:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sleepmenu{position:fixed;z-index:30;top:calc(env(safe-area-inset-top) + 52px);right:16px;width:min(260px,calc(100vw - 32px));padding:14px;border-radius:18px;background:rgba(36,20,51,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--gline);color:#fff;font:500 13px var(--sans)}
+.sleepmenu h2{margin:0 0 10px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+.sleepmenu .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.sleepmenu button{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:10px 6px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+.sleepmenu button[aria-pressed="true"]{border-color:#fff;background:rgba(255,255,255,.22)}
+.sleepmenu button:focus-visible{outline:2px solid #fff}
+.sleepmenu .go{display:block;width:100%;background:#ffc83d;color:#241433;font-weight:700}
+.sleepmenu .note{margin:10px 0 0;font-size:11px;opacity:.7;line-height:1.35}
+.sleepdark{position:fixed;inset:0;z-index:50;background:#000;display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(env(safe-area-inset-bottom) + 40px);color:#fff;font:400 12px var(--mono);letter-spacing:.14em;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sleepdark span{opacity:0;transition:opacity 1.2s}
+.sleepdark.hint span{opacity:.35}
 </style>
 </head>
 <body>
 <canvas id="road" aria-hidden="true"></canvas>
 <main class="app">
-  <header class="top"><span class="brand">SPINRADIO</span><span id="clock">--:--</span></header>
+  <header class="top"><span class="brand">SPINRADIO</span><span class="right"><button class="moon" id="moon" aria-haspopup="true" aria-expanded="false" aria-label="Sleep-Timer und Schlafmodus"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg><span id="moont">SLEEP</span></button><span id="clock">--:--</span></span></header>
   <div></div>
   <section class="deck" aria-live="polite">
     <div class="badge" id="badge"></div>
@@ -162,12 +174,20 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
   <footer class="ctrl">
     <div class="row">
       <button class="dial" id="dial" aria-label="Sender wählen: halten und zum Sender ziehen, oder tippen">
-        <svg viewBox="-26 -26 52 52" aria-hidden="true"><g class="ring" id="dialring"></g><circle class="core" r="11.5"/><circle class="dotc" r="2"/><path class="waves" d="M-4.2-4.2a6 6 0 0 0 0 8.4M4.2-4.2a6 6 0 0 1 0 8.4M-7.2-7.2a10.2 10.2 0 0 0 0 14.4M7.2-7.2a10.2 10.2 0 0 1 0 14.4"/></svg>
+        <svg viewBox="-12 -12 24 24" aria-hidden="true"><path class="pw" d="M-6.3-6.3a9 9 0 1 0 12.6 0M0-10.5V-1.5"/></svg>
       </button>    </div>
     <p class="hint">Halten und zum Sender ziehen, oder tippen. Aus: unten im Rad.</p>
     <audio id="player" preload="none" playsinline referrerpolicy="no-referrer"></audio>
   </footer>
 </main>
+
+<div class="sleepmenu" id="smenu" hidden role="dialog" aria-label="Sleep-Timer">
+  <h2>Sleep-Timer</h2>
+  <div class="opts" id="sopts"></div>
+  <button class="go" id="sdark">Bildschirm ausschalten</button>
+  <p class="note">Das Radio spielt weiter. Zum Aufwecken auf den Bildschirm tippen. Mit Timer wird es zum Schluss langsam leiser und geht dann aus.</p>
+</div>
+<div class="sleepdark" id="sdarkov" hidden role="button" aria-label="Aufwecken"><span>TIPPEN ZUM AUFWECKEN</span></div>
 
 <div class="overlay" id="ov" hidden>
   <div class="wheel" id="wheel">
@@ -247,7 +267,12 @@ const ST=[
   prog:[[0,'maj'],[5,'maj'],[7,'maj'],[0,'maj']],kick:[0,4,8,12],snare:[4,12],sv:.9,hat:[2,6,10,14],ohat:[2,6,10,14],hv:.8,fill:true,
   bass:{w:'square',v:.1,cut:900,oct:-12,p:[[0,0,2],[4,7,2],[8,0,2],[12,7,2]]},
   comp:{w:'sawtooth',v:.05,cut:2600,len:1.5,steps:[2,6,10,14],o:12},
-  arp:{w:'square',v:.035,cut:3600,len:1.6,steps:E8,pat:[0,1,2,1,2,1,0,2],o:24,pl:true}}
+  arp:{w:'square',v:.035,cut:3600,len:1.6,steps:E8,pat:[0,1,2,1,2,1,0,2],o:24,pl:true}},
+ {name:'Lametta FM',genre:'Weihnachten',mono:'LF',shape:'diamond',color:'#e63946',freq:104.2,tempo:104,swing:0,key:48,
+  prog:[[0,'maj'],[5,'maj'],[7,'dom7'],[0,'maj']],kick:[0,8],snare:[4,12],sv:.4,hat:[0,2,4,6,8,10,12,14],hv:.5,ohat:[14],
+  bass:{w:'triangle',v:.28,cut:700,oct:-12,p:[[0,0,3],[8,7,3]]},
+  comp:{w:'triangle',v:.06,cut:2400,len:1.4,steps:[0,6,8,14],pl:true,o:12},
+  arp:{w:'sine',v:.06,cut:4200,len:.5,steps:E8,pat:[0,2,1,2,0,2,1,2],o:24,pl:true}}
 ];
 /* Live-Streams pro Sender, in der Reihenfolge der Sender oben. Mehrere Adressen = Ersatz, falls eine ausfällt. */
 const SOMA=(c,n)=>[1,2,5,6].map(i=>({n,u:`https://ice${i}.somafm.com/${c}-128-mp3`}));
@@ -266,7 +291,8 @@ const LIVE=[
  [{n:'NIA Radio Lo-Fi',u:'https://radio.nia.nc/radio/8020/lofi-hq-stream.aac'},{n:'CLIAMP Lofi Hip Hop',u:'https://radio.cliamp.stream/lofi/stream'},...SOMA('fluid','SomaFM Fluid')],
  [{n:'Ballermann Radio',u:'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432'},
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
-  {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}]
+  {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}],
+ [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},...SOMA('xmasrocks','SomaFM Christmas Rocks!'),...SOMA('christmas','SomaFM Christmas Lounge'),{n:'181.FM Christmas Classics',u:'https://listen.181fm.com/181-xtraditional_128k.mp3'}]
 ];
 /* Landschaft pro Sender: Himmel (oben, Mitte, Horizont), Sonne (innen, aussen), Sonnenhöhe 0..1, Kulisse, Boden, Effekt */
 const SCN=[
@@ -282,7 +308,8 @@ const SCN=[
  {sky:['#7fb3e8','#c9def5','#ffd9c2'],sun:['#ffffff','#ffb38a'],y:.18,scene:'hills',ground:'road',fx:''},         // Indie: Hügelstraße am Morgen
  {sky:['#24123f','#7a4bb0','#f0b8ff'],sun:['#ffffff','#d9a6ff'],y:.42,scene:'discoball',ground:'grid',fx:'sparkle'},// Disco: Spiegelkugel über Tanzfläche
  {sky:['#21405a','#5fb3a8','#f7d8a8'],sun:['#fff8e0','#f2a65a'],y:.15,scene:'mountains',ground:'lake',fx:'stars'},// Chillout: Berge am See
- {sky:['#ff5f9e','#ffb36a','#fff07a'],sun:['#ffffff','#ffd23f'],y:.8,scene:'beach',ground:'sea',fx:'sparkle'}     // Partyhits: Strandparty
+ {sky:['#ff5f9e','#ffb36a','#fff07a'],sun:['#ffffff','#ffd23f'],y:.8,scene:'beach',ground:'sea',fx:'sparkle'},    // Partyhits: Strandparty
+ {sky:['#0b1740','#2c4f86','#f0b36e'],sun:['#fff6dc','#ffd08a'],y:.3,scene:'xmas',ground:'snow',fx:'snow'}       // Weihnachten: verschneites Dorf
 ];
 const SCN_OFF={sky:['#2b2350','#7a5c9e','#f2b8a2'],sun:['#ffe9d6','#ff8a7a'],y:.04,scene:'lighthouse',ground:'sea',fx:'stars'}; // Aus: Leuchtturm
 const N=ST.length+1;            // letzter Eintrag im Rad: Radio aus
@@ -423,7 +450,6 @@ for(let i=0;i<N;i++){
 }
 svg.innerHTML=html;
 const segs=[...svg.querySelectorAll('.seg')];
-$('#dialring').innerHTML=ST.map((st,i)=>{ const a=i/ST.length*6.2832; return `<circle cx="${(19*Math.sin(a)).toFixed(2)}" cy="${(-19*Math.cos(a)).toFixed(2)}" r="3.4" fill="${st.color}" stroke="#fff" stroke-width="1"/>`; }).join('');
 
 /* Schrift verkleinern, bis der Name in eine Zeile passt (kein Umbruch mitten im Wort) */
 function fitText(el){
@@ -614,11 +640,12 @@ const fd=new Uint8Array(128); let lev=[],fake=[],fakeT=0; let phase=0,last=0,T=0
 const cvt=s=>({sky:s.sky.map(hexRgb),sun:s.sun.map(hexRgb),y:s.y});
 let now=cvt(SCN_OFF),goal=cvt(SCN_OFF);
 let sceneA=SCN_OFF.scene,sceneB=SCN_OFF.scene,sceneT=1,groundA=SCN_OFF.ground,groundB=SCN_OFF.ground;
-let starA=1,starG=1,sparkA=0,sparkG=0;
+let starA=1,starG=1,sparkA=0,sparkG=0,snowA=0,snowG=0;
+const flakes=Array.from({length:70},()=>({x:rnd(),y:rnd(),r:1+rnd()*2.2,v:.03+rnd()*.07,p:rnd()*6.28}));
 function setScene(s){
   goal=cvt(s);
   if(s.scene!==sceneB||s.ground!==groundB){ sceneA=sceneB; groundA=groundB; sceneB=s.scene; groundB=s.ground; sceneT=0; }
-  starG=s.fx==='stars'?1:0; sparkG=s.fx==='sparkle'?1:0;
+  starG=s.fx==='stars'?1:0; sparkG=s.fx==='sparkle'?1:0; snowG=s.fx==='snow'?1:0;
   const tc=document.getElementById('themec'); if(tc) tc.setAttribute('content',s.sky[0]);
   root.style.setProperty('--sky',s.sky[0]);
 }
@@ -785,6 +812,22 @@ function drawScene(name,hy,a){
     [[.14,1],[.5,.8],[.86,1.1]].forEach(([ux,s],i)=>{ const x=W*ux,base=hy+H*.08,h=H*.08*s,r=W*.09*s; rx.fillStyle=rgb(col); rx.fillRect(x-1.5,base-h,3,h);
       rx.fillStyle=rgb(cols[i*2%5]); rx.beginPath(); rx.arc(x,base-h,r,Math.PI,0); rx.fill(); rx.fillStyle='rgba(255,255,255,.75)'; rx.beginPath(); rx.moveTo(x,base-h-r); rx.lineTo(x-r*.35,base-h); rx.lineTo(x+r*.35,base-h); rx.fill(); });
     break; }
+  case 'xmas': {
+    // ferne Tannen
+    for(let k=0;k<14;k++){ const tx=W*(.01+k*.075), th=H*(.05+(k%4)*.016); rx.fillStyle=rgb(mix(col,far,.35)); rx.beginPath(); rx.moveTo(tx,hy-th); rx.lineTo(tx-th*.38,hy+2); rx.lineTo(tx+th*.38,hy+2); rx.fill(); }
+    // Haeuser mit warmen Fenstern
+    [[.68,.1,.075],[.83,.085,.065]].forEach(([ux,hh,ww],i)=>{ const x=W*ux,w=W*ww,h=H*hh,b=hy+H*.045;
+      rx.fillStyle=rgb(col); rx.fillRect(x,b-h,w,h); rx.beginPath(); rx.moveTo(x-w*.14,b-h); rx.lineTo(x+w*.5,b-h-w*.5); rx.lineTo(x+w*1.14,b-h); rx.fill();
+      rx.fillStyle='rgba(255,255,255,.9)'; rx.beginPath(); rx.moveTo(x-w*.1,b-h-1); rx.lineTo(x+w*.5,b-h-w*.46); rx.lineTo(x+w*1.1,b-h-1); rx.lineTo(x+w*.5,b-h-w*.3); rx.fill();
+      const f=.8+.2*Math.sin(T*3+i*2); rx.fillStyle=`rgba(255,200,90,${f})`; rx.fillRect(x+w*.2,b-h*.7,w*.22,h*.28); rx.fillRect(x+w*.58,b-h*.7,w*.22,h*.28); });
+    // grosser Weihnachtsbaum mit Lichtern
+    { const x=W*.24,b=hy+H*.06,h=H*.2;
+      rx.fillStyle=rgb(col); for(let t=0;t<4;t++){ const y1=b-h*(.12+t*.22),wd=h*(.36-t*.07); rx.beginPath(); rx.moveTo(x,y1-h*.3); rx.lineTo(x-wd,y1+h*.08); rx.lineTo(x+wd,y1+h*.08); rx.fill(); }
+      rx.fillRect(x-h*.035,b-h*.12,h*.07,h*.12);
+      const cl=[[255,80,90],[255,215,90],[110,200,255],[130,235,140]];
+      for(let k=0;k<14;k++){ const u=k/14,y=b-h*(.1+u*.78),wd=h*(.3*(1-u)+.02),xx=x+Math.sin(k*2.4)*wd,on=Math.sin(T*3+k*1.7)>-.4; rx.fillStyle=rgb(cl[k%4],on?1:.35); rx.beginPath(); rx.arc(xx,y,3,0,6.283); rx.fill(); }
+      rx.fillStyle='#ffe27a'; rx.beginPath(); for(let k=0;k<10;k++){ const rr=k%2?h*.022:h*.05,a=k*Math.PI/5-Math.PI/2; rx.lineTo(x+Math.cos(a)*rr,b-h*.98+Math.sin(a)*rr); } rx.fill(); }
+    break; }
   case 'lighthouse': {
     rx.beginPath(); rx.moveTo(W*.6,hy+2); rx.quadraticCurveTo(W*.78,hy-H*.05,W*1.02,hy-H*.04); rx.lineTo(W*1.02,hy+2); rx.fill();
     const lx=W*.8,base=hy-H*.035,h=H*.17,w0=W*.05,w1=W*.03;
@@ -811,6 +854,11 @@ function drawGround(type,hy,a){
       const yy=hy+3+k*k*.55*(H-hy)/400, w=(30+k*9)*(.6+.4*Math.sin(T*(type==='lake'?.6:1.6)+k*1.7)), ww=Math.max(1,1+k*.12);
       rx.fillStyle=rgb(mix(now.sun[0],now.sun[1],k/26),.55-k*.015); rx.fillRect(sx-w/2+Math.sin(T+k)*(type==='lake'?2:6),yy,w,ww);
     }
+  } else if(type==='snow'){
+    const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[2],[235,243,255],.7))); g.addColorStop(1,rgb(mix(now.sky[0],[200,220,245],.55)));
+    rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
+    rx.fillStyle='rgba(255,255,255,.55)';
+    for(let i=0;i<7;i++){ const p=(i+.5)/7, y=hy+(H-hy)*p*p+4; rx.beginPath(); rx.ellipse(W*((i*.37)%1),y,W*(.08+p*.18),2+p*5,0,0,6.283); rx.fill(); }
   } else if(type==='grid'){
     const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[1],NIGHT,.5))); g.addColorStop(1,rgb(NIGHT));
     rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
@@ -831,6 +879,46 @@ function drawGround(type,hy,a){
       for(let i=0;i<10;i++){ const p=(i+.5)/10, y=hy+(H-hy)*p*p; rx.beginPath(); rx.moveTo(0,y); rx.lineTo(W,y); rx.stroke(); }
     }
   }
+  rx.restore();
+}
+
+/* Weihnachtsmann mit Schlitten und Rentieren: fliegt von links nach rechts, dann 10 s Pause */
+const SANTA_FLY=9, SANTA_PAUSE=10; let santaT0=null;
+function drawDeer(x,y,ph,nose){
+  rx.fillStyle='#ffe9b8'; rx.strokeStyle='#ffe9b8'; rx.lineWidth=1.6; rx.lineCap='round';
+  rx.beginPath(); rx.ellipse(x,y,12,5.5,0,0,6.283); rx.fill();           // Koerper
+  rx.beginPath(); rx.moveTo(x+9,y-2); rx.lineTo(x+15,y-9); rx.stroke();      // Hals
+  rx.beginPath(); rx.ellipse(x+17,y-10,4.4,3.2,-.3,0,6.283); rx.fill();      // Kopf
+  rx.beginPath(); rx.moveTo(x+16,y-12); rx.lineTo(x+13,y-19); rx.moveTo(x+14.5,y-16); rx.lineTo(x+18,y-19); rx.moveTo(x+17.5,y-12.5); rx.lineTo(x+20,y-18); rx.stroke(); // Geweih
+  for(let k=0;k<4;k++){ const lx=x+(k<2?-8:7)+(k%2)*3, sw=Math.sin(ph+k*1.6)*5; rx.beginPath(); rx.moveTo(lx,y+3); rx.lineTo(lx+sw,y+11+Math.abs(sw)*.2); rx.stroke(); } // Beine im Galopp
+  if(nose){ const g=rx.createRadialGradient(x+21,y-10,0,x+21,y-10,9); g.addColorStop(0,'rgba(255,60,60,.95)'); g.addColorStop(1,'rgba(255,60,60,0)'); rx.fillStyle=g; rx.beginPath(); rx.arc(x+21,y-10,9,0,6.283); rx.fill(); rx.fillStyle='#ff3b3b'; rx.beginPath(); rx.arc(x+21,y-10,2.2,0,6.283); rx.fill(); }
+}
+function drawSanta(x,y,sc,ph){
+  rx.save(); rx.translate(x,y); rx.scale(sc,sc);
+  rx.strokeStyle='rgba(255,233,184,.8)'; rx.lineWidth=1; rx.beginPath(); rx.moveTo(-125,-4); rx.lineTo(10,-4); rx.stroke(); // Zuegel
+  drawDeer(0,0,ph,true); drawDeer(-34,1,ph+1,false); drawDeer(-68,0,ph+2,false);
+  // Schlitten
+  rx.translate(-118,0);
+  rx.fillStyle='#c1272d'; rx.beginPath(); rx.moveTo(-18,-14); rx.lineTo(14,-14); rx.quadraticCurveTo(10,2,-2,5); rx.lineTo(-16,5); rx.closePath(); rx.fill();
+  rx.strokeStyle='#ffe9b8'; rx.lineWidth=2; rx.beginPath(); rx.moveTo(-22,10); rx.lineTo(16,10); rx.quadraticCurveTo(22,10,20,3); rx.moveTo(-14,5); rx.lineTo(-14,10); rx.moveTo(6,4); rx.lineTo(6,10); rx.stroke();
+  // Weihnachtsmann + Sack
+  rx.fillStyle='#8b5a2b'; rx.beginPath(); rx.arc(-12,-17,8,0,6.283); rx.fill();
+  rx.fillStyle='#e63946'; rx.beginPath(); rx.arc(3,-19,6,Math.PI,0); rx.lineTo(9,-14); rx.lineTo(-3,-14); rx.fill();
+  rx.fillStyle='#ffd6b0'; rx.beginPath(); rx.arc(3,-22,3.3,0,6.283); rx.fill();
+  rx.fillStyle='#fff'; rx.beginPath(); rx.arc(3,-19.5,3.3,0,3.14); rx.fill(); rx.beginPath(); rx.arc(3,-26,2.6,Math.PI,0); rx.lineTo(8,-24); rx.lineTo(-2,-24); rx.fill();
+  rx.fillStyle='#e63946'; rx.beginPath(); rx.moveTo(-1.5,-26); rx.lineTo(9,-30); rx.lineTo(6.5,-24); rx.fill();
+  rx.restore();
+}
+function drawSantaFlight(alpha){
+  if(alpha<=.01||reduce){ santaT0=null; return; }
+  if(santaT0===null) santaT0=T;
+  const t=(T-santaT0)%(SANTA_FLY+SANTA_PAUSE);
+  if(t>SANTA_FLY) return;
+  const u=t/SANTA_FLY, sc=Math.max(.6,Math.min(1.3,W/400)), span=160*sc;
+  const x=-span+u*(W+span*2), y=H*.13+Math.sin(u*6.283*1.5)*H*.012+u*H*.02;
+  rx.save(); rx.globalAlpha=alpha;
+  for(let k=0;k<14;k++){ const tx=x-(k+1)*11*sc*1.2-110*sc, ty=y+Math.sin(T*6+k)*3+k*.8; if(tx<-10||tx>W+10) continue; rx.fillStyle=`rgba(255,233,184,${.55*(1-k/14)})`; rx.beginPath(); rx.arc(tx,ty,2.2*(1-k/18),0,6.283); rx.fill(); }
+  drawSanta(x,y,sc,T*14);
   rx.restore();
 }
 function avgLevel(){ let s=0,n=0; for(const v of lev){ s+=v||0; n++; } return n?s/n:0; }
@@ -855,6 +943,8 @@ function drawLand(){
   // Boden und Kulisse (überblendet)
   drawGround(groundA,hy,1-sceneT); drawGround(groundB,hy,sceneT);
   drawScene(sceneA,hy,1-sceneT); drawScene(sceneB,hy,sceneT);
+  drawSantaFlight((sceneA==='xmas'?1-sceneT:0)+(sceneB==='xmas'?sceneT:0));
+  if(snowA>.01){ rx.fillStyle=`rgba(255,255,255,${.85*snowA})`; flakes.forEach(f=>{ rx.beginPath(); rx.arc(f.x*W,f.y*H,f.r,0,6.283); rx.fill(); }); }
 }
 function drawEq(){
   ex.clearRect(0,0,EW,EH);
@@ -879,9 +969,54 @@ function loop(ts){
   for(let i=0;i<2;i++){ now.sun[i]=mix(now.sun[i],goal.sun[i],k); }
   now.y=lerp(now.y,goal.y,k);
   sceneT=reduce?1:Math.min(1,sceneT+dt*1.2);
-  starA=lerp(starA,starG,k); sparkA=lerp(sparkA,sparkG,k);
-  drawLand(); drawEq(); requestAnimationFrame(loop);
+  starA=lerp(starA,starG,k); sparkA=lerp(sparkA,sparkG,k); snowA=lerp(snowA,snowG,k);
+  if(snowA>.01&&!reduce) flakes.forEach(f=>{ f.y+=f.v*dt; f.x+=Math.sin(T*.8+f.p)*dt*.012; if(f.y>1){ f.y=-.02; f.x=Math.random(); } });
+  if(!asleep){ drawLand(); drawEq(); } requestAnimationFrame(loop);
 }
+
+/* ---------- Sleep-Timer und Schlafmodus ---------- */
+let sleepEnd=0,sleepMin=0,sleepTick=null,sleepFade=null,asleep=false,hintT=null;
+const smenu=$('#smenu'),moon=$('#moon'),moont=$('#moont'),sdarkov=$('#sdarkov'),sopts=$('#sopts');
+[[0,'Aus'],[15,'15 min'],[30,'30 min'],[45,'45 min'],[60,'60 min'],[90,'90 min']].forEach(([m,l])=>{
+  const b=document.createElement('button'); b.textContent=l; b.dataset.m=m; b.setAttribute('aria-pressed',m===0?'true':'false');
+  b.addEventListener('click',()=>{ setSleep(m); }); sopts.appendChild(b);
+});
+function paintSleepBtns(){ sopts.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.m===sleepMin))); }
+function fmtLeft(ms){ const s=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(s/60); return m+':'+String(s%60).padStart(2,'0'); }
+function sleepLabel(){ moont.textContent=sleepEnd?fmtLeft(sleepEnd-Date.now()):'SLEEP'; }
+function resetVol(){ clearInterval(sleepFade); sleepFade=null; try{ player.volume=1; }catch(e){} if(master&&ctx) master.gain.value=.55; }
+function setSleep(m){
+  clearInterval(sleepTick); resetVol(); sleepMin=m; paintSleepBtns();
+  if(!m){ sleepEnd=0; sleepLabel(); return; }
+  sleepEnd=Date.now()+m*60000; sleepLabel();
+  sleepTick=setInterval(()=>{
+    const left=sleepEnd-Date.now(); sleepLabel();
+    if(left<=0){ clearInterval(sleepTick); sleepEnd=0; sleepMin=0; paintSleepBtns(); sleepLabel(); fadeOutEnd(); }
+  },1000);
+}
+function fadeOutEnd(){
+  let k=0; const N=20;
+  clearInterval(sleepFade);
+  sleepFade=setInterval(()=>{
+    k++; const v=Math.max(0,1-k/N);
+    try{ player.volume=v; }catch(e){}
+    if(master&&ctx) master.gain.value=.55*v;
+    if(k>=N){ resetVol(); setStation(-1); sleepLabel(); }
+  },500);
+}
+function openSMenu(o){ smenu.hidden=!o; moon.setAttribute('aria-expanded',String(o)); }
+moon.addEventListener('click',e=>{ e.stopPropagation(); openSMenu(smenu.hidden); });
+document.addEventListener('pointerdown',e=>{ if(!smenu.hidden&&!smenu.contains(e.target)&&!moon.contains(e.target)) openSMenu(false); });
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&!smenu.hidden) openSMenu(false); });
+function goDark(){
+  openSMenu(false); asleep=true; sdarkov.hidden=false; sdarkov.classList.add('hint'); document.getElementById('themec').content='#000000';
+  clearTimeout(hintT); hintT=setTimeout(()=>sdarkov.classList.remove('hint'),3500);
+}
+function wake(){ asleep=false; sdarkov.hidden=true; document.getElementById('themec').content='#2b2350'; }
+$('#sdark').addEventListener('click',goDark);
+sdarkov.addEventListener('click',wake);
+sdarkov.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') wake(); });
+
 fit(); paintDeck(); paintWheel(); requestAnimationFrame(loop);
 const refit=()=>{ fitText($('#sname')); if(wheelOpen) fitText($('#hn')); };
 try{ document.fonts.ready.then(refit); }catch(e){}
