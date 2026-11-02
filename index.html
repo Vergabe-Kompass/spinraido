@@ -297,7 +297,7 @@ const LIVE=[
  [{n:'FIP Reggae',u:'https://icecast.radiofrance.fr/fipreggae-midfi.mp3'}],
  [{n:'Funky Corner Radio',u:'https://ais-sa2.cdnstream1.com/2447_192.mp3'},{n:'FIP Groove',u:'https://icecast.radiofrance.fr/fipgroove-midfi.mp3'}],
  [{n:'ByteFM',u:'https://bytefm.cast.addradio.de/bytefm/main/high/stream'},{n:'1LIVE Plan B',u:'https://wdr-1live-planb.icecastssl.wdr.de/wdr/1live/planb/mp3/128/stream.mp3'},{n:'KEXP',u:'https://kexp.streamguys1.com/kexp160.aac'}],
- [{n:'Disco Funk Modern Soul Boogie',u:'https://discofunk.streamingmedia.it/usa'},{n:'FIP Groove',u:'https://icecast.radiofrance.fr/fipgroove-midfi.mp3'}],
+ [{n:'90s90s Hits',u:'https://streams.90s90s.de/pop/mp3-192/streams.90s90s.de/'},{n:'Sunshine Live 90er',u:'https://stream.sunshine-live.de/90er/mp3-192/stream.sunshine-live.de'},{n:'Flux FM 90er',u:'https://channels.fluxfm.de/90s/stream.mp3'},{n:'Disco Funk Modern Soul Boogie',u:'https://discofunk.streamingmedia.it/usa'},{n:'FIP Groove',u:'https://icecast.radiofrance.fr/fipgroove-midfi.mp3'}],
  [{n:'NIA Radio Lo-Fi',u:'https://radio.nia.nc/radio/8020/lofi-hq-stream.aac'},{n:'CLIAMP Lofi Hip Hop',u:'https://radio.cliamp.stream/lofi/stream'}],
  [{n:'Ballermann Radio',u:'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432'},
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
@@ -622,7 +622,7 @@ const TRIM={
  'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432':.5,'https://stream.bmr-radio.de/ballermann-radio.mp3':.5,'https://audio.bmr-radio.de/top30/mp3-192/Webplayer':.54,
  'https://stream.backroadcountryradio.com/listen/backroad/radio.mp3':.56,'https://icecast.radiofrance.fr/fipelectro-midfi.mp3':.89,'https://icecast.radiofrance.fr/fipreggae-midfi.mp3':.9,'https://icecast.radiofrance.fr/fipgroove-midfi.mp3':.73,
  'https://kexp.streamguys1.com/kexp160.aac':1,'https://stream.srg-ssr.ch/m/rsj/mp3_128':1,'https://icecast.radiofrance.fr/fipjazz-midfi.mp3':.63,'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3':.9,
- 'https://icecast.walmradio.com:8443/christmas':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
+ 'https://streams.90s90s.de/pop/mp3-192/streams.90s90s.de/':.38,'https://stream.sunshine-live.de/90er/mp3-192/stream.sunshine-live.de':.53,'https://channels.fluxfm.de/90s/stream.mp3':.51,'https://icecast.walmradio.com:8443/christmas':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
 };
 let curTrim=1;
 function trimFor(u){ return TRIM[u]!==undefined?TRIM[u]:1; }
@@ -730,6 +730,36 @@ function drawPalm(x,base,h,lean,col,a){
   rx.beginPath(); rx.arc(tx,ty+h*.02,h*.035,0,6.283); rx.fill();
   rx.restore();
 }
+function drawPalmPro(x,base,h,lean,a,ph){
+  // Palme mit verjuengtem, geringeltem Stamm, Kokosnuessen und gefiederten Wedeln
+  rx.save(); rx.globalAlpha=a; rx.lineCap='round'; rx.lineJoin='round';
+  const tx=x+lean*h*.38,ty=base-h, cx1=x+lean*h*.04,cy1=base-h*.55;
+  const bez=t=>{ const u=1-t; return [u*u*x+2*u*t*cx1+t*t*tx, u*u*base+2*u*t*cy1+t*t*ty]; };
+  const L=[],R=[]; const n=22;
+  for(let i=0;i<=n;i++){ const t=i/n,[px,py]=bez(t),[qx,qy]=bez(Math.min(1,t+.02)),[rx0,ry0]=bez(Math.max(0,t-.02));
+    let dx=qx-rx0,dy=qy-ry0; const d=Math.hypot(dx,dy)||1; dx/=d; dy/=d; const w=h*(.052-.026*t)+(t<.08?h*.02*(1-t/.08):0);
+    L.push([px-dy*w,py+dx*w]); R.push([px+dy*w,py-dx*w]); }
+  rx.fillStyle='#86552f'; rx.beginPath(); L.forEach((q,i)=>i?rx.lineTo(q[0],q[1]):rx.moveTo(q[0],q[1])); for(let i=n;i>=0;i--) rx.lineTo(R[i][0],R[i][1]); rx.closePath(); rx.fill();
+  rx.fillStyle='rgba(60,32,14,.35)'; rx.beginPath(); for(let i=0;i<=n;i++){ const m=[(L[i][0]*.2+R[i][0]*.8),(L[i][1]*.2+R[i][1]*.8)]; i?rx.lineTo(m[0],m[1]):rx.moveTo(m[0],m[1]); } for(let i=n;i>=0;i--) rx.lineTo(R[i][0],R[i][1]); rx.closePath(); rx.fill();
+  rx.strokeStyle='rgba(50,26,10,.55)'; rx.lineWidth=Math.max(1,h*.008);
+  for(let i=1;i<n;i+=1){ if(i%2) continue; rx.beginPath(); rx.moveTo(L[i][0],L[i][1]); rx.lineTo(R[i][0],R[i][1]); rx.stroke(); }
+  // Wedel
+  const sway=Math.sin(T*.7+x*.01)*.05, FR=[[-196,.2,0],[-160,.55,0],[-128,.82,0],[-98,.9,0],[-66,.85,0],[-34,.6,0],[-4,.35,0],[24,.12,0]];
+  const crown=(front)=>{ FR.forEach(([deg,k,_],j)=>{
+      if((j%2===0)===front) return;
+      const ang=(deg+sway*57)*Math.PI/180, len=h*(.5+.12*Math.sin(j*1.7)), droop=.2+.55*Math.abs(Math.cos(ang));
+      const ex=tx+Math.cos(ang)*len, ey=ty+Math.sin(ang)*len*.65+droop*len*.8, qx=tx+Math.cos(ang)*len*.55, qy=ty+Math.sin(ang)*len*.75-len*.2;
+      const pt=t=>{ const u=1-t; return [u*u*tx+2*u*t*qx+t*t*ex, u*u*ty+2*u*t*qy+t*t*ey]; };
+      rx.strokeStyle=front?'#33b062':'#1d7a42'; rx.lineWidth=Math.max(1.4,h*.011); rx.beginPath();
+      for(let m=1;m<=15;m++){ const t=m/15,[px,py]=pt(t),[ax,ay]=pt(Math.max(0,t-.03)),[bx,by]=pt(Math.min(1,t+.03)); let dx=bx-ax,dy=by-ay; const d=Math.hypot(dx,dy)||1; dx/=d; dy/=d;
+        const ll=len*.3*Math.sin(Math.PI*Math.pow(t,.75))+len*.03;
+        [-1,1].forEach(sd=>{ let nx=-dy*sd,ny=dx*sd; let vx=nx*.75+dx*.55, vy=ny*.75+dy*.55+.55; const vd=Math.hypot(vx,vy); rx.moveTo(px,py); rx.lineTo(px+vx/vd*ll,py+vy/vd*ll); }); }
+      rx.stroke();
+      rx.strokeStyle=front?'#9bdc7a':'#3f9a58'; rx.lineWidth=Math.max(1.6,h*.014); rx.beginPath(); rx.moveTo(tx,ty); rx.quadraticCurveTo(qx,qy,ex,ey); rx.stroke(); }); };
+  crown(false); crown(true);
+  rx.fillStyle='#5a3418'; [[-.03,.035],[.025,.04],[0,.06]].forEach(([ox,oy])=>{ rx.beginPath(); rx.arc(tx+ox*h,ty+oy*h,h*.026,0,6.283); rx.fill(); });
+  rx.restore();
+}
 function drawCactus(x,base,h,col,a){
   rx.save(); rx.globalAlpha=a; rx.strokeStyle=rgb(col); rx.lineCap='round'; rx.lineJoin='round';
   rx.lineWidth=h*.16; rx.beginPath(); rx.moveTo(x,base); rx.lineTo(x,base-h); rx.stroke();
@@ -776,7 +806,7 @@ function drawScene(name,hy,a){
       rx.fillStyle=rgb(sand); rx.beginPath(); rx.moveTo(0,y0); rx.quadraticCurveTo(W*.3,y0+H*.035,W*.55,y0+H*.02); rx.quadraticCurveTo(W*.8,y0+H*.005,W,y0-H*.005); rx.lineTo(W,H); rx.lineTo(0,H); rx.closePath(); rx.fill();
       rx.strokeStyle='rgba(255,255,255,.7)'; rx.lineWidth=2; rx.beginPath(); rx.moveTo(0,y0-1); rx.quadraticCurveTo(W*.3,y0+H*.035-1,W*.55,y0+H*.02-1); rx.quadraticCurveTo(W*.8,y0+H*.005-1,W,y0-H*.005-1); rx.stroke(); }
     rx.restore();
-    drawPalm(W*.06,hy+H*.05,S*.74,.9,col,a); drawPalm(W*.2,hy+H*.06,S*.54,.55,col,a); drawPalm(W*.92,hy+H*.05,S*.64,-.8,col,a);
+    drawPalmPro(W*.9,hy+H*.052,S*.5,-.55,a); drawPalmPro(W*.25,hy+H*.062,S*.48,.5,a); drawPalmPro(W*.08,hy+H*.052,S*.74,.62,a); drawPalmPro(W*.8,hy+H*.062,S*.34,-.35,a);
     return;
   case 'city':
     city.forEach(b=>{ const bh=b.h*H*.13,bx=b.x*W,bw=b.w*W;
