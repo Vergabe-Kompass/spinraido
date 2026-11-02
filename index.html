@@ -150,8 +150,11 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .sleepmenu button:focus-visible{outline:2px solid #fff}
 .sleepmenu .go{display:block;width:100%;background:#ffc83d;color:#241433;font-weight:700}
 .sleepmenu .note{margin:10px 0 0;font-size:11px;opacity:.7;line-height:1.35}
-.sleepdark{position:fixed;inset:0;z-index:50;background:#000;display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(env(safe-area-inset-bottom) + 40px);color:#fff;font:400 12px var(--mono);letter-spacing:.14em;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.sleepdark span{opacity:0;transition:opacity 1.2s}
+.sleepdark{position:fixed;inset:0;z-index:50;background:transparent;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(env(safe-area-inset-bottom) + 40px);color:#fff;font:400 12px var(--mono);letter-spacing:.14em;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sleepdark .blind{position:absolute;left:0;right:0;top:0;height:0;background:repeating-linear-gradient(to bottom,#000 0 11px,#120d1a 11px 15px);box-shadow:0 8px 22px 4px rgba(0,0,0,.75);transition:height 8s cubic-bezier(.45,0,.55,1)}
+.sleepdark .blind::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:#2a2036}
+.sleepdark.done .blind{box-shadow:none;background:#000}
+.sleepdark span{position:relative;opacity:0;transition:opacity 1.2s}
 .sleepdark.hint span{opacity:.35}
 </style>
 </head>
@@ -187,7 +190,7 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
   <button class="go" id="sdark">Bildschirm ausschalten</button>
   <p class="note">Das Radio spielt weiter. Zum Aufwecken auf den Bildschirm tippen. Mit Timer wird es zum Schluss langsam leiser und geht dann aus.</p>
 </div>
-<div class="sleepdark" id="sdarkov" hidden role="button" aria-label="Aufwecken"><span>TIPPEN ZUM AUFWECKEN</span></div>
+<div class="sleepdark" id="sdarkov" hidden role="button" aria-label="Aufwecken"><div class="blind" id="blind"></div><span>TIPPEN ZUM AUFWECKEN</span></div>
 
 <div class="overlay" id="ov" hidden>
   <div class="wheel" id="wheel">
@@ -1008,11 +1011,17 @@ function openSMenu(o){ smenu.hidden=!o; moon.setAttribute('aria-expanded',String
 moon.addEventListener('click',e=>{ e.stopPropagation(); openSMenu(smenu.hidden); });
 document.addEventListener('pointerdown',e=>{ if(!smenu.hidden&&!smenu.contains(e.target)&&!moon.contains(e.target)) openSMenu(false); });
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&!smenu.hidden) openSMenu(false); });
+let blindT=null;
 function goDark(){
-  openSMenu(false); asleep=true; sdarkov.hidden=false; sdarkov.classList.add('hint'); document.getElementById('themec').content='#000000';
-  clearTimeout(hintT); hintT=setTimeout(()=>sdarkov.classList.remove('hint'),3500);
+  openSMenu(false); sdarkov.hidden=false; sdarkov.classList.remove('hint','done');
+  const bl=$('#blind'), fin=()=>{ asleep=true; sdarkov.classList.add('done','hint'); document.getElementById('themec').content='#000000'; clearTimeout(hintT); hintT=setTimeout(()=>sdarkov.classList.remove('hint'),3500); };
+  clearTimeout(blindT);
+  if(reduce){ bl.style.transition='none'; bl.style.height='100%'; fin(); return; }
+  bl.style.transition='none'; bl.style.height='0'; void bl.offsetHeight;
+  bl.style.transition=''; bl.style.height='100%';
+  blindT=setTimeout(fin,8000);
 }
-function wake(){ asleep=false; sdarkov.hidden=true; document.getElementById('themec').content='#2b2350'; }
+function wake(){ clearTimeout(blindT); clearTimeout(hintT); asleep=false; sdarkov.hidden=true; sdarkov.classList.remove('hint','done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.height='0'; document.getElementById('themec').content='#2b2350'; }
 $('#sdark').addEventListener('click',goDark);
 sdarkov.addEventListener('click',wake);
 sdarkov.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') wake(); });
