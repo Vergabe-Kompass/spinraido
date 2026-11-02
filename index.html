@@ -303,7 +303,7 @@ const LIVE=[
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
   {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}],
  [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},{n:'Christmas FM Non-stop',u:'https://xmas-node1.zip.wf/live.aac'},{n:'Christmas FM Classics',u:'https://christmasfm.cdnstream1.com/2550_128.mp3'}],
- [{n:'Adroit Jazz Underground',u:'https://icecast.walmradio.com:8443/jazz'},{n:'Radio Swiss Jazz',u:'https://stream.srg-ssr.ch/m/rsj/mp3_128'},{n:'FIP Jazz',u:'https://icecast.radiofrance.fr/fipjazz-midfi.mp3'},{n:'NDR Blue',u:'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3'}]
+ [{n:'Radio Swiss Jazz',u:'https://stream.srg-ssr.ch/m/rsj/mp3_128'},{n:'FIP Jazz',u:'https://icecast.radiofrance.fr/fipjazz-midfi.mp3'},{n:'NDR Blue',u:'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3'}]
 ];
 /* Landschaft pro Sender: Himmel (oben, Mitte, Horizont), Sonne (innen, aussen), Sonnenhöhe 0..1, Kulisse, Boden, Effekt */
 const SCN=[
@@ -596,7 +596,7 @@ const TRIM={
  'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432':.5,'https://stream.bmr-radio.de/ballermann-radio.mp3':.5,'https://audio.bmr-radio.de/top30/mp3-192/Webplayer':.54,
  'https://stream.backroadcountryradio.com/listen/backroad/radio.mp3':.56,'https://icecast.radiofrance.fr/fipelectro-midfi.mp3':.89,'https://icecast.radiofrance.fr/fipreggae-midfi.mp3':.9,'https://icecast.radiofrance.fr/fipgroove-midfi.mp3':.73,
  'https://kexp.streamguys1.com/kexp160.aac':1,'https://stream.srg-ssr.ch/m/rsj/mp3_128':1,'https://icecast.radiofrance.fr/fipjazz-midfi.mp3':.63,'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3':.9,
- 'https://icecast.walmradio.com:8443/christmas':.7,'https://icecast.walmradio.com:8443/jazz':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
+ 'https://icecast.walmradio.com:8443/christmas':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
 };
 let curTrim=1;
 function trimFor(u){ return TRIM[u]!==undefined?TRIM[u]:1; }
