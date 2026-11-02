@@ -278,24 +278,23 @@ const ST=[
   arp:{w:'sine',v:.06,cut:4200,len:.5,steps:E8,pat:[0,2,1,2,0,2,1,2],o:24,pl:true}}
 ];
 /* Live-Streams pro Sender, in der Reihenfolge der Sender oben. Mehrere Adressen = Ersatz, falls eine ausfällt. */
-const SOMA=(c,n)=>[1,2,5,6].map(i=>({n,u:`https://ice${i}.somafm.com/${c}-128-mp3`}));
 const LIVE=[
- [{n:'Radio Paradise Rock Mix',u:'https://stream.radioparadise.com/rock-128'},{n:'Radio Paradise',u:'https://stream.radioparadise.com/mp3-128'}],
- [{n:'N-JOY',u:'https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3'}],
+ [{n:'MDR Sputnik Rock',u:'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3'},{n:'Radio Paradise Rock Mix',u:'https://stream.radioparadise.com/rock-128'},{n:'Radio Paradise',u:'https://stream.radioparadise.com/mp3-128'}],
+ [{n:'1LIVE',u:'https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3'},{n:'N-JOY',u:'https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3'}],
  [{n:'Bremen NEXT',u:'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3'},{n:'DASDING',u:'https://liveradio.swr.de/d9zadj3/dasding/'}],
- [{n:'Známka Punku',u:'https://ice.abradio.cz/znamkapunku128.mp3'}],
- SOMA('bootliquor','SomaFM Boot Liquor'),
- [{n:'SomaFM The Trip',u:'https://ice6.somafm.com/thetrip-128-mp3'},...SOMA('thetrip','SomaFM The Trip')],
+ [{n:'MDR Sputnik',u:'https://mdr-284330-0.sslcast.mdr.de/mdr/284330/0/mp3/high/stream.mp3'},{n:'Fritz',u:'https://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid'},{n:'Známka Punku',u:'https://ice.abradio.cz/znamkapunku128.mp3'}],
+ [{n:'0nlineradio Country',u:'https://stream.0nlineradio.com/country'},{n:'0N Country',u:'https://0n-country.radionetz.de/0n-country.mp3'}],
+ [{n:'MDR Sputnik Club',u:'https://mdr-284331-2.sslcast.mdr.de/mdr/284331/2/mp3/high/stream.mp3'},{n:'Nightride FM Spacesynth',u:'https://stream.nightride.fm/spacesynth.mp3'}],
  [{n:'Inselradio Mallorca',u:'https://addrad.io/445fxk9'},{n:'Inselradio Mallorca',u:'https://inselradiomallorca.stream29.radiohost.de/inselradiomallorca-live_mp3-128'}],
- SOMA('reggae','SomaFM Heavyweight Reggae'),
- SOMA('7soul','SomaFM Seven Inch Soul'),
- SOMA('indiepop','SomaFM Indie Pop Rocks!'),
- [{n:'Disco Funk Modern Soul Boogie',u:'https://discofunk.streamingmedia.it/usa'},{n:'Funky Corner Radio',u:'https://ais-sa2.cdnstream1.com/2447_192.mp3'}],
- [{n:'NIA Radio Lo-Fi',u:'https://radio.nia.nc/radio/8020/lofi-hq-stream.aac'},{n:'CLIAMP Lofi Hip Hop',u:'https://radio.cliamp.stream/lofi/stream'},...SOMA('fluid','SomaFM Fluid')],
+ [{n:'0N Reggae',u:'https://0n-reggae.radionetz.de/0n-reggae.mp3'}],
+ [{n:'Funky Corner Radio',u:'https://ais-sa2.cdnstream1.com/2447_192.mp3'},{n:'Disco Funk Modern Soul Boogie',u:'https://discofunk.streamingmedia.it/usa'}],
+ [{n:'ByteFM',u:'https://bytefm.cast.addradio.de/bytefm/main/high/stream'},{n:'1LIVE Plan B',u:'https://wdr-1live-planb.icecastssl.wdr.de/wdr/1live/planb/mp3/128/stream.mp3'}],
+ [{n:'0N Disco',u:'https://0n-disco.radionetz.de/0n-disco.mp3'},{n:'0N 70s',u:'https://0n-70s.radionetz.de/0n-70s.mp3'}],
+ [{n:'NIA Radio Lo-Fi',u:'https://radio.nia.nc/radio/8020/lofi-hq-stream.aac'},{n:'CLIAMP Lofi Hip Hop',u:'https://radio.cliamp.stream/lofi/stream'},{n:'0nlineradio Lo-Fi',u:'https://stream.0nlineradio.com/lo-fi'}],
  [{n:'Ballermann Radio',u:'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432'},
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
   {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}],
- [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},...SOMA('xmasrocks','SomaFM Christmas Rocks!'),...SOMA('christmas','SomaFM Christmas Lounge'),{n:'181.FM Christmas Classics',u:'https://listen.181fm.com/181-xtraditional_128k.mp3'}]
+ [{n:'0N Christmas',u:'https://0n-christmas.radionetz.de/0n-christmas.mp3'},{n:'0nlineradio Christmas Movie Hits',u:'https://0nlineradio.radioho.st/0r-christmas-movie-hits/mp3-192'}]
 ];
 /* Landschaft pro Sender: Himmel (oben, Mitte, Horizont), Sonne (innen, aussen), Sonnenhöhe 0..1, Kulisse, Boden, Effekt */
 const SCN=[
@@ -570,11 +569,31 @@ function setMode(m,name){
   mediaMeta();
 }
 function armTimer(ms){ clearTimeout(liveTimer); liveTimer=setTimeout(()=>{ if(mode==='load') nextUrl(); },ms); }
+/* Lautstaerke-Ausgleich: Faktor pro Stream (gemessen, Ziel ca. -18 LUFS).  Hip-Hop-Sender und 1LIVE Plan B: Schaetzwert. */
+const TRIM={
+ 'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3':.86,'https://stream.radioparadise.com/rock-128':.33,'https://stream.radioparadise.com/mp3-128':.45,
+ 'https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3':.6,'https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3':.9,
+ 'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3':1,'https://liveradio.swr.de/d9zadj3/dasding/':.72,
+ 'https://mdr-284330-0.sslcast.mdr.de/mdr/284330/0/mp3/high/stream.mp3':.78,'https://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid':1,'https://ice.abradio.cz/znamkapunku128.mp3':.6,
+ 'https://stream.0nlineradio.com/country':.79,'https://0n-country.radionetz.de/0n-country.mp3':.38,
+ 'https://mdr-284331-2.sslcast.mdr.de/mdr/284331/2/mp3/high/stream.mp3':.97,'https://stream.nightride.fm/spacesynth.mp3':.46,
+ 'https://addrad.io/445fxk9':.6,'https://inselradiomallorca.stream29.radiohost.de/inselradiomallorca-live_mp3-128':.6,
+ 'https://0n-reggae.radionetz.de/0n-reggae.mp3':.42,
+ 'https://ais-sa2.cdnstream1.com/2447_192.mp3':.26,'https://discofunk.streamingmedia.it/usa':.35,
+ 'https://bytefm.cast.addradio.de/bytefm/main/high/stream':.59,'https://wdr-1live-planb.icecastssl.wdr.de/wdr/1live/planb/mp3/128/stream.mp3':.97,
+ 'https://0n-disco.radionetz.de/0n-disco.mp3':.41,'https://0n-70s.radionetz.de/0n-70s.mp3':.38,
+ 'https://radio.nia.nc/radio/8020/lofi-hq-stream.aac':.89,'https://radio.cliamp.stream/lofi/stream':.44,'https://stream.0nlineradio.com/lo-fi':.63,
+ 'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432':.5,'https://stream.bmr-radio.de/ballermann-radio.mp3':.5,'https://audio.bmr-radio.de/top30/mp3-192/Webplayer':.54,
+ 'https://0n-christmas.radionetz.de/0n-christmas.mp3':.37,'https://0nlineradio.radioho.st/0r-christmas-movie-hits/mp3-192':1
+};
+let curTrim=1;
+function trimFor(u){ return TRIM[u]!==undefined?TRIM[u]:1; }
+function setTrim(u){ curTrim=trimFor(u); try{ player.volume=curTrim; }catch(e){} }
 function tryUrl(){
   const list=LIVE[liveIdx];
   if(!list||urlIdx>=list.length){ fallback(); return; }
   const it=list[urlIdx]; setMode('load',it.n);
-  player.src=it.u;
+  player.src=it.u; setTrim(it.u);
   const pr=player.play();
   if(pr&&pr.catch) pr.catch(err=>{
     if(liveIdx<0) return;
@@ -1098,7 +1117,7 @@ const smenu=$('#smenu'),moon=$('#moon'),moont=$('#moont'),sdarkov=$('#sdarkov'),
 function paintSleepBtns(){ sopts.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.m===sleepMin))); }
 function fmtLeft(ms){ const s=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(s/60); return m+':'+String(s%60).padStart(2,'0'); }
 function sleepLabel(){ moont.textContent=sleepEnd?fmtLeft(sleepEnd-Date.now()):'SLEEP'; }
-function resetVol(){ clearInterval(sleepFade); sleepFade=null; try{ player.volume=1; }catch(e){} if(master&&ctx) master.gain.value=.55; }
+function resetVol(){ clearInterval(sleepFade); sleepFade=null; try{ player.volume=curTrim; }catch(e){} if(master&&ctx) master.gain.value=.55; }
 function setSleep(m){
   clearInterval(sleepTick); resetVol(); sleepMin=m; paintSleepBtns();
   if(!m){ sleepEnd=0; sleepLabel(); return; }
@@ -1113,7 +1132,7 @@ function fadeOutEnd(){
   clearInterval(sleepFade);
   sleepFade=setInterval(()=>{
     k++; const v=Math.max(0,1-k/N);
-    try{ player.volume=v; }catch(e){}
+    try{ player.volume=curTrim*v; }catch(e){}
     if(master&&ctx) master.gain.value=.55*v;
     if(k>=N){ resetVol(); setStation(-1); sleepLabel(); }
   },500);
