@@ -104,7 +104,7 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .overlay.on{opacity:1}
 .wheel{
   --sc:#7a5c9e;
-  position:relative;width:min(92vw,62vh,520px);aspect-ratio:1;container-type:inline-size;
+  position:relative;width:min(84vw,62vh,500px);aspect-ratio:1;container-type:inline-size;
   transform:scale(.7) rotate(-24deg);transition:transform .5s cubic-bezier(.2,.9,.2,1.12);
 }
 .overlay.on .wheel{transform:none}
@@ -112,14 +112,14 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .seg{transition:transform .2s cubic-bezier(.3,1.6,.5,1),opacity .2s;cursor:pointer}
 .overlay.on .seg{animation:segIn .5s cubic-bezier(.2,.9,.25,1.15) backwards;animation-delay:calc(var(--i)*24ms)}
 @keyframes segIn{from{opacity:0;transform:scale(.4) rotate(-30deg)}to{opacity:1;transform:none}}
-.seg>path{fill:rgba(255,255,255,.62);stroke:rgba(255,255,255,.95);stroke-width:1.5;transition:fill .2s}
+.seg>path{fill:rgba(255,255,255,.62);fill:color-mix(in srgb,var(--c) 38%,rgba(255,255,255,.62));stroke:rgba(255,255,255,.95);stroke-width:1.5;transition:fill .2s}
 .seg .lg{transform-box:fill-box;transform-origin:center;transition:transform .22s cubic-bezier(.3,1.7,.5,1)}
 .seg .dot{fill:var(--c);stroke:#fff;stroke-width:1.5;opacity:0;transition:opacity .2s}
 .seg.cur .dot{opacity:1}
 .seg.sel{transform:scale(1.085)}
 .seg.sel>path{fill:var(--c);stroke:#fff;stroke-width:3;filter:drop-shadow(0 8px 14px rgba(36,20,51,.35))}
-.seg.sel .lg{transform:scale(1.25)}
-.seg.sel .lg>g{stroke:#fff;stroke-width:3;stroke-linejoin:round;paint-order:stroke}
+.seg .gl{fill:#241433;stroke:none}
+#ptr{transform-origin:0 0;transition:transform .3s cubic-bezier(.3,1.5,.5,1);fill:var(--sc);stroke:#fff;stroke-width:2.5;stroke-linejoin:round;filter:drop-shadow(0 3px 5px rgba(36,20,51,.45))}
 .hubdisc{fill:rgba(255,255,255,.88);stroke:var(--sc);stroke-width:4;transition:stroke .2s}
 .hub{position:absolute;left:50%;top:50%;width:38%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
 .hub.flip{animation:hubflip .25s cubic-bezier(.2,.9,.3,1)}
@@ -128,7 +128,7 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .hub-n{margin:1cqw 0;font:800 6.6cqw/1 var(--disp);white-space:nowrap;color:var(--ink)}
 .hub-f{margin:0;font:500 3cqw var(--mono);letter-spacing:.12em;color:var(--ink2)}
 .hub-l{margin:.8cqw auto 0;max-width:82%;font:400 2.8cqw/1.35 var(--sans);color:var(--ink2);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;text-wrap:balance}
-.cancel{font:600 13px var(--sans);letter-spacing:.06em;color:var(--ink);background:var(--glass2);border:1px solid #fff;border-radius:999px;padding:10px 20px;cursor:pointer;box-shadow:0 10px 24px -12px rgba(36,20,51,.5)}
+.cancel{width:44px;height:44px;display:grid;place-items:center;font:600 18px/1 var(--sans);color:var(--ink);background:var(--glass2);border:1px solid #fff;border-radius:50%;padding:0;cursor:pointer;box-shadow:0 10px 24px -12px rgba(36,20,51,.5)}
 .mono{font:800 15px var(--disp);letter-spacing:-.02em}
 
 @media (prefers-reduced-motion:reduce){
@@ -200,7 +200,7 @@ body.asleep .app,body.asleep #road{visibility:hidden}
     <svg id="wsvg" viewBox="-206 -206 412 412" aria-hidden="true"></svg>
     <div class="hub" id="hub"><p class="hub-g" id="hg"></p><p class="hub-n" id="hn"></p><p class="hub-f" id="hf"></p><p class="hub-l" id="hl"></p></div>
   </div>
-  <button class="cancel" id="cancel" type="button">Abbrechen</button>
+  <button class="cancel" id="cancel" type="button" aria-label="Abbrechen">✕</button>
 </div>
 
 <script>
@@ -324,6 +324,10 @@ const SCN=[
  {sky:['#090d2b','#2b2a72','#d06aa6'],sun:['#fff4e0','#ffb27a'],y:.34,scene:'jazz',ground:'pave',fx:'stars'}        // Jazz: Grossstadtnacht mit Neonschild
 ];
 const SCN_OFF={sky:['#2b2350','#7a5c9e','#f2b8a2'],sun:['#ffe9d6','#ff8a7a'],y:.04,scene:'lighthouse',ground:'sea',fx:'stars'}; // Aus: Leuchtturm
+// Rad-Reihenfolge nach Stimmung: links ruhig, über oben steigend, rechts wild (ST, LIVE, SCN bleiben deckungsgleich)
+{ const ORDER=['Leerlauf','Saxo FM','Samtgroove','Morgentau','Palmenwind','Staubpiste','Lametta FM','Sol y Calle','Glitzer FM','Spiegelkugel','Sangria FM','Neonpuls','Blockbeat','Kurzschluss','Asphalt FM'];
+  const idx=ORDER.map(n=>ST.findIndex(x=>x.name===n));
+  if(idx.length===ST.length&&idx.every(i=>i>=0)&&new Set(idx).size===idx.length){ const a=idx.map(i=>ST[i]),b=idx.map(i=>LIVE[i]),c=idx.map(i=>SCN[i]); ST.splice(0,ST.length,...a); LIVE.splice(0,LIVE.length,...b); SCN.splice(0,SCN.length,...c); } }
 const N=ST.length+1;            // letzter Eintrag im Rad: Radio aus
 const OFF=ST.length;
 let cur=-1;                      // aktueller Sender, -1 = aus
@@ -441,6 +445,25 @@ function logo(st){
   const dy=st.shape==='tri'?6:1.5;
   return `<g fill="${st.color}">${shapeSvg(st.shape,24)}</g><text class="mono" y="${dy}" text-anchor="middle" dominant-baseline="central" fill="#0a0d12">${st.mono}</text>`;
 }
+/* Symbole: Phosphor Icons (MIT-Lizenz, phosphoricons.com), Duotone */
+const GLY={
+ 'Rock':'<path d="M155.2,100.8c-23-23-55.57-27.63-72.8-10.4a34.21,34.21,0,0,0-7.61,11.66,16.23,16.23,0,0,1-14.72,10C48,112.44,37,116.61,28.8,124.8,7.6,146,13.33,186.12,41.6,214.4s68.39,34,89.6,12.8C139.39,219,143.56,208,144,195.93a16.23,16.23,0,0,1,10-14.72,34.21,34.21,0,0,0,11.66-7.61C182.83,156.37,178.17,123.78,155.2,100.8ZM112,168a24,24,0,1,1,24-24A24,24,0,0,1,112,168Z" opacity="0.2"/><path d="M249.66,46.34l-40-40a8,8,0,0,0-11.31,11.32L200.69,20,140.52,80.16C117.73,68.3,92.21,69.29,76.75,84.74a42.27,42.27,0,0,0-9.39,14.37A8.24,8.24,0,0,1,59.81,104c-14.59.49-27.26,5.72-36.65,15.11C11.08,131.22,6,148.6,8.74,168.07,11.4,186.7,21.07,205.15,36,220s33.34,24.56,52,27.22A71.13,71.13,0,0,0,98.1,248c15.32,0,28.83-5.23,38.76-15.16,9.39-9.39,14.62-22.06,15.11-36.65a8.24,8.24,0,0,1,4.92-7.55,42.12,42.12,0,0,0,14.37-9.39c15.45-15.46,16.44-41,4.58-63.77L236,55.31l2.34,2.34a8,8,0,1,0,11.32-11.31ZM160,167.93a26.12,26.12,0,0,1-8.95,5.83,24.24,24.24,0,0,0-15,21.89c-.36,10.46-4,19.41-10.43,25.88-8.44,8.43-21,11.95-35.36,9.89C75,229.25,59.73,221.19,47.27,208.73S26.75,181,24.58,165.81c-2-14.37,1.46-26.92,9.89-35.36C40.94,124,49.89,120.37,60.35,120h0a24.22,24.22,0,0,0,21.89-15,26.12,26.12,0,0,1,5.83-9c5.49-5.49,13-8.13,21.38-8.13a49.38,49.38,0,0,1,19.13,4.19L108.5,112.19a32,32,0,1,0,35.31,35.31l20.08-20.08C170.41,142.71,169.47,158.41,160,167.93Zm-10.4-61.48a72.9,72.9,0,0,1,5.93,6.75l-15.42,15.42a32.22,32.22,0,0,0-12.68-12.68l15.42-15.43A73,73,0,0,1,149.55,106.45ZM112,128a16,16,0,0,1,16,16h0a16,16,0,1,1-16-16Zm48.85-32.85a86.94,86.94,0,0,0-6.68-6L176,67.31,188.69,80l-21.83,21.82A86.94,86.94,0,0,0,160.86,95.14ZM200,68.68,187.32,56,212,31.31,224.69,44ZM93.66,194.33a8,8,0,0,1-11.31,11.32l-32-32a8,8,0,0,1,11.32-11.31Z"/>',
+ 'Pop':'<path d="M194.82,151.43l-55.09,20.3-20.3,55.09a7.92,7.92,0,0,1-14.86,0l-20.3-55.09-55.09-20.3a7.92,7.92,0,0,1,0-14.86l55.09-20.3,20.3-55.09a7.92,7.92,0,0,1,14.86,0l20.3,55.09,55.09,20.3A7.92,7.92,0,0,1,194.82,151.43Z" opacity="0.2"/><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/>',
+ 'Hip-Hop':'<path d="M168,64v64a40,40,0,0,1-40,40h0a40,40,0,0,1-40-40V64a40,40,0,0,1,40-40h0A40,40,0,0,1,168,64Z" opacity="0.2"/><path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z"/>',
+ 'Alternative':'<path d="M96,240l16-80L48,136,160,16,144,96l64,24Z" opacity="0.2"/><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/>',
+ 'Country':'<path d="M190.53,160.18C158.13,192,128,192,128,192s-30.13,0-62.53-31.82L70.06,136H185.94Z" opacity="0.2"/><path d="M216,120a8,8,0,0,0-6.78,3.76A179.9,179.9,0,0,1,195.41,143L178.32,53.07a16,16,0,0,0-25.72-9.55l-.13.1L128,64,103.53,43.62l-.13-.1a16,16,0,0,0-25.72,9.53L60.59,143a179.27,179.27,0,0,1-13.81-19.25A8,8,0,0,0,40,120a40,40,0,0,0,0,80H216a40,40,0,0,0,0-80ZM93.41,56,117.88,76.4l.12.1a15.92,15.92,0,0,0,20,0l.12-.1L162.59,56l13.68,72H79.73ZM40,184a24,24,0,0,1-4.14-47.64C51.28,159.83,67.73,174.65,82.4,184Zm88,0c-.33,0-25.49-.4-53.86-26.6L76.68,144H179.31l2.54,13.35a113.28,113.28,0,0,1-27.35,19C139.1,183.77,128.06,184,128,184Zm88,0H173.6c14.67-9.35,31.12-24.17,46.54-47.64A24,24,0,0,1,216,184Z"/>',
+ 'Elektro':'<path d="M208,96v64H48V96Z" opacity="0.2"/><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/>',
+ 'Latin':'<path d="M184,128a56,56,0,1,1-56-56A56,56,0,0,1,184,128Z" opacity="0.2"/><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/>',
+ 'Reggae':'<path d="M232,58.75,128,104a65.47,65.47,0,0,1,17.84-45.25,58.87,58.87,0,0,1,86.16,0ZM176.56,98.18A64.2,64.2,0,0,0,128,104.52L221.81,176a63,63,0,0,0-6.39-48.22A63.73,63.73,0,0,0,176.56,98.18Zm-66.4-39.43a58.87,58.87,0,0,0-86.16,0L128,104A65.47,65.47,0,0,0,110.16,58.75ZM79.44,98.18a63.73,63.73,0,0,0-38.86,29.6A63,63,0,0,0,34.19,176L128,104.52A64.2,64.2,0,0,0,79.44,98.18Z" opacity="0.2"/><path d="M237.79,53.23a66.86,66.86,0,0,0-97.74,0,72.21,72.21,0,0,0-12.05,17,72.21,72.21,0,0,0-12-17,66.86,66.86,0,0,0-97.74,0,8,8,0,0,0,2.6,12.85L77,90.55a71.42,71.42,0,0,0-43.36,33.21,70.64,70.64,0,0,0-7.2,54.32A8,8,0,0,0,39,182.36l81-61.68V224a8,8,0,0,0,16,0V120.68l81,61.68a8,8,0,0,0,12.57-4.28,70.64,70.64,0,0,0-7.2-54.32A71.42,71.42,0,0,0,179,90.55l56.22-24.47a8,8,0,0,0,2.6-12.85ZM67.08,48a51.13,51.13,0,0,1,37.28,16.26,56.53,56.53,0,0,1,14.26,26.93L39,56.53A50.5,50.5,0,0,1,67.08,48ZM40,161.5a54.82,54.82,0,0,1,7.47-29.7,55.55,55.55,0,0,1,34-25.89A56.52,56.52,0,0,1,96.1,104a55.82,55.82,0,0,1,16.23,2.41ZM208.5,131.8A54.82,54.82,0,0,1,216,161.5l-72.3-55.1a56.3,56.3,0,0,1,64.83,25.4ZM137.38,91.19a56.53,56.53,0,0,1,14.26-26.93A51.13,51.13,0,0,1,188.92,48,50.5,50.5,0,0,1,217,56.53Z"/>',
+ 'Soul & Funk':'<path d="M128,32a96,96,0,1,0,96,96A96,96,0,0,0,128,32Zm0,120a24,24,0,1,1,24-24A24,24,0,0,1,128,152Z" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a56.06,56.06,0,0,0-56,56,8,8,0,0,1-16,0,72.08,72.08,0,0,1,72-72,8,8,0,0,1,0,16Zm72,56a72.08,72.08,0,0,1-72,72,8,8,0,0,1,0-16,56.06,56.06,0,0,0,56-56,8,8,0,0,1,16,0Zm-40,0a32,32,0,1,0-32,32A32,32,0,0,0,160,128Zm-48,0a16,16,0,1,1,16,16A16,16,0,0,1,112,128Z"/>',
+ 'Indie':'<path d="M208,144a80,80,0,0,1-160,0c0-72,80-128,80-128S208,72,208,144Z" opacity="0.2"/><path d="M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75ZM128,216a72.08,72.08,0,0,1-72-72c0-57.23,55.47-105,72-118,16.53,13,72,60.75,72,118A72.08,72.08,0,0,1,128,216Zm55.89-62.66a57.6,57.6,0,0,1-46.56,46.55A8.75,8.75,0,0,1,136,200a8,8,0,0,1-1.32-15.89c16.57-2.79,30.63-16.85,33.44-33.45a8,8,0,0,1,15.78,2.68Z"/>',
+ 'Disco':'<path d="M192,152a80,80,0,0,1-80,80s32-24,32-80ZM112,72S80,96,80,152h64C144,96,112,72,112,72Z" opacity="0.2"/><path d="M120,64.37V16a8,8,0,0,0-16,0V64.37a88,88,0,1,0,16,0ZM183.54,144H151.77c-1.51-28.36-10.79-48.36-19.44-61.06A72.16,72.16,0,0,1,183.54,144Zm-95.3,16h47.52c-2,33.52-16.13,52.95-23.76,61.08C104.36,212.93,90.23,193.51,88.24,160Zm0-16c2-33.52,16.13-52.95,23.76-61.08,7.64,8.15,21.77,27.57,23.76,61.08Zm3.43-61.06C83,95.64,73.74,115.64,72.23,144H40.46A72.16,72.16,0,0,1,91.67,82.94ZM40.46,160H72.23c1.51,28.36,10.79,48.36,19.44,61.06A72.16,72.16,0,0,1,40.46,160Zm91.87,61.06c8.65-12.7,17.93-32.7,19.44-61.06h31.77A72.16,72.16,0,0,1,132.33,221.06ZM256,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,256,88ZM152,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H192V64a8,8,0,0,1-16,0V48H160A8,8,0,0,1,152,40Z"/>',
+ 'Lo-Fi':'<path d="M80,144v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V128H64A16,16,0,0,1,80,144Zm112-16a16,16,0,0,0-16,16v40a16,16,0,0,0,16,16h16a16,16,0,0,0,16-16V128Z" opacity="0.2"/><path d="M201.89,54.66A104.08,104.08,0,0,0,24,128v56a24,24,0,0,0,24,24H64a24,24,0,0,0,24-24V144a24,24,0,0,0-24-24H40.36A88,88,0,0,1,128,40h.67a87.71,87.71,0,0,1,87,80H192a24,24,0,0,0-24,24v40a24,24,0,0,0,24,24h16a24,24,0,0,0,24-24V128A103.41,103.41,0,0,0,201.89,54.66ZM64,136a8,8,0,0,1,8,8v40a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V136Zm152,48a8,8,0,0,1-8,8H192a8,8,0,0,1-8-8V144a8,8,0,0,1,8-8h24Z"/>',
+ 'Partyhits':'<path d="M200,72l-72,72L56,72Z" opacity="0.2"/><path d="M237.66,45.66A8,8,0,0,0,232,32H24a8,8,0,0,0-5.66,13.66L120,147.31V208H88a8,8,0,0,0,0,16h80a8,8,0,0,0,0-16H136V147.31ZM75.31,80H180.69L128,132.69ZM212.69,48l-16,16H59.31l-16-16Z"/>',
+ 'Weihnachten':'<path d="M32,192l56-72H48L128,16l80,104H168l56,72Z" opacity="0.2"/><path d="M230.31,187.09,184.36,128H208a8,8,0,0,0,6.34-12.88l-80-104a8,8,0,0,0-12.68,0l-80,104A8,8,0,0,0,48,128H71.64L25.69,187.09A8,8,0,0,0,32,200h88v40a8,8,0,0,0,16,0V200h88a8,8,0,0,0,6.31-12.91ZM48.36,184l46-59.09A8,8,0,0,0,88,112H64.25L128,29.12,191.75,112H168a8,8,0,0,0-6.31,12.91L207.64,184Z"/>',
+ 'Jazz':'<path d="M184,40V144H144V40ZM72,144h40V40H72Z" opacity="0.2"/><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM80,48h24v88H80Zm32,104a8,8,0,0,0,8-8V48h16v96a8,8,0,0,0,8,8h8v56H104V152Zm40-16V48h24v88ZM48,48H64v96a8,8,0,0,0,8,8H88v56H48ZM208,208H168V152h16a8,8,0,0,0,8-8V48h16V208Z"/>'
+};
+function wlogo(st){ return `<g class="gl" transform="scale(.18) translate(-128,-128)">${GLY[st.genre]||''}</g>`; }
 const OFFLOGO='<circle r="21" fill="#fff" stroke="#5b4a73" stroke-width="3"/><path d="M-8-11A14 14 0 1 0 8-11M0-22V-4" fill="none" stroke="#5b4a73" stroke-width="3" stroke-linecap="round"/>';
 
 /* ---------- Rad ---------- */
@@ -458,9 +481,11 @@ let html='<circle class="hubdisc" r="100"/>';
 for(let i=0;i<N;i++){
   const st=ST[i],col=st?st.color:'#b9a8d6';
   const [lx,ly]=P((R+R0)/2,i*STEP+ROT),[dx,dy]=P(R-9,i*STEP+ROT);
-  html+=`<g class="seg" data-i="${i}" style="--c:${col};--i:${i}"><path d="${wedge(i)}"/><g transform="translate(${f2(lx)},${f2(ly)})"><g class="lg">${st?logo(st):OFFLOGO}</g></g><circle class="dot" r="3" cx="${f2(dx)}" cy="${f2(dy)}"/></g>`;
+  html+=`<g class="seg" data-i="${i}" style="--c:${col};--i:${i}"><path d="${wedge(i)}"/><g transform="translate(${f2(lx)},${f2(ly)})"><g class="lg">${st?wlogo(st):OFFLOGO}</g></g><circle class="dot" r="3" cx="${f2(dx)}" cy="${f2(dy)}"/></g>`;
 }
+html+=`<g id="ptr"><path d="M0,${-(R+19)}L-11,${-(R+37)}L11,${-(R+37)}Z"/></g>`;
 svg.innerHTML=html;
+const ptr=svg.querySelector('#ptr'); let pa=null;
 const segs=[...svg.querySelectorAll('.seg')];
 
 /* Schrift verkleinern, bis der Name in eine Zeile passt (kein Umbruch mitten im Wort) */
@@ -476,12 +501,13 @@ function paintWheel(){
   segs.forEach((g,k)=>{ g.classList.toggle('sel',k===sel); g.classList.toggle('cur',k===(cur<0?OFF:cur)&&cur>=0); });
   const h=hubFor(sel);
   $('#hg').textContent=h.g; $('#hn').textContent=h.n; $('#hf').textContent=h.f; $('#hl').textContent=h.l; wheel.style.setProperty('--sc',h.c);
+  { const tg=sel*STEP+ROT; if(pa===null){ ptr.style.transition='none'; pa=tg; ptr.style.transform=`rotate(${pa}deg)`; void ptr.getBoundingClientRect(); ptr.style.transition=''; } else { pa+=((tg-pa+540)%360)-180; ptr.style.transform=`rotate(${pa}deg)`; } }
   fitText($('#hn'));
   hub.classList.remove('flip'); void hub.offsetWidth; hub.classList.add('flip');
 }
 function select(i){
   if(i===sel) return; sel=i; paintWheel(); tick();
-  try{ navigator.vibrate&&navigator.vibrate(8); }catch(e){}
+  try{ navigator.vibrate&&navigator.vibrate(10); }catch(e){}
 }
 function openWheel(){
   if(wheelOpen) return; wheelOpen=true; tOpen=performance.now();
@@ -492,7 +518,7 @@ function closeWheel(){
   if(!wheelOpen) return; wheelOpen=false; tapMode=false; ov.classList.remove('on');
   setTimeout(()=>{ if(!wheelOpen) ov.hidden=true; },240);
 }
-function confirmSel(){ const i=sel; closeWheel(); setStation(i<ST.length?i:-1); }
+function confirmSel(){ try{ navigator.vibrate&&navigator.vibrate([14,30,14]); }catch(e){} const i=sel; closeWheel(); setStation(i<ST.length?i:-1); }
 function idxFromPoint(x,y){
   const r=svg.getBoundingClientRect(); const dx=x-(r.left+r.width/2),dy=y-(r.top+r.height/2);
   if(Math.hypot(dx,dy)/(r.width/2)<.2) return null;
