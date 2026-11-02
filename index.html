@@ -284,7 +284,12 @@ const ST=[
   prog:[[2,'min7'],[7,'dom7'],[0,'maj7'],[9,'dom7']],kick:[0,10],snare:[4,12],sv:.2,hat:[0,3,4,7,8,11,12,15],hv:.4,
   bass:{w:'triangle',v:.34,cut:700,oct:-12,p:[[0,0,3],[4,4,3],[8,7,3],[12,5,3]]},
   comp:{w:'sine',v:.07,cut:2000,len:1.2,steps:[0,7,10],pl:true,o:12},
-  arp:{w:'triangle',v:.045,cut:3200,len:.6,steps:E8,pat:[0,2,1,3,2,1,0,1],o:24,pl:true}}
+  arp:{w:'triangle',v:.045,cut:3200,len:.6,steps:E8,pat:[0,2,1,3,2,1,0,1],o:24,pl:true}},
+ {name:'Bremen 4',genre:'Pop & Rock',mono:'B4',shape:'circle',color:'#18b5b0',freq:101.6,tempo:118,swing:0,key:47,
+  prog:[[0,'maj'],[5,'maj'],[9,'min'],[7,'maj']],kick:[0,6,8,14],snare:[4,12],hat:E8,hv:.75,
+  bass:{w:'sawtooth',v:.15,cut:620,oct:-12,p:E8.map(s=>[s,0,2])},
+  comp:{w:'triangle',v:.045,cut:2200,len:15,steps:[0],a:.12,r:.2},
+  arp:{w:'sawtooth',v:.035,cut:3600,len:1.2,steps:E8,pat:[0,2,1,2,0,2,1,2],o:12,pl:true}}
 ];
 /* Live-Streams pro Sender, in der Reihenfolge der Sender oben. Mehrere Adressen = Ersatz, falls eine ausfällt. */
 const LIVE=[
@@ -304,7 +309,8 @@ const LIVE=[
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
   {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}],
  [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},{n:'Christmas FM Non-stop',u:'https://xmas-node1.zip.wf/live.aac'},{n:'Christmas FM Classics',u:'https://christmasfm.cdnstream1.com/2550_128.mp3'}],
- [{n:'Radio Swiss Jazz',u:'https://stream.srg-ssr.ch/m/rsj/mp3_128'},{n:'FIP Jazz',u:'https://icecast.radiofrance.fr/fipjazz-midfi.mp3'},{n:'NDR Blue',u:'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3'}]
+ [{n:'Radio Swiss Jazz',u:'https://stream.srg-ssr.ch/m/rsj/mp3_128'},{n:'FIP Jazz',u:'https://icecast.radiofrance.fr/fipjazz-midfi.mp3'},{n:'NDR Blue',u:'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3'}],
+ [{n:'Bremen Vier',u:'https://icecast.radiobremen.de/rb/bremenvier/live/mp3/128/stream.mp3'},{n:'Bremen NEXT',u:'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3'}]
 ];
 /* Landschaft pro Sender: Himmel (oben, Mitte, Horizont), Sonne (innen, aussen), Sonnenhöhe 0..1, Kulisse, Boden, Effekt */
 const SCN=[
@@ -322,11 +328,12 @@ const SCN=[
  {sky:['#21405a','#5fb3a8','#f7d8a8'],sun:['#fff8e0','#f2a65a'],y:.15,scene:'mountains',ground:'lake',fx:'stars'},// Chillout: Berge am See
  {sky:['#ff5f9e','#ffb36a','#fff07a'],sun:['#ffffff','#ffd23f'],y:.8,scene:'beach',ground:'sea',fx:'sparkle'},    // Partyhits: Strandparty
  {sky:['#0b1740','#2c4f86','#f0b36e'],sun:['#fff6dc','#ffd08a'],y:.3,scene:'xmas',ground:'snow',fx:'snow'},      // Weihnachten: verschneites Dorf
- {sky:['#090d2b','#2b2a72','#d06aa6'],sun:['#fff4e0','#ffb27a'],y:.34,scene:'jazz',ground:'pave',fx:'stars'}        // Jazz: Grossstadtnacht mit Neonschild
+ {sky:['#090d2b','#2b2a72','#d06aa6'],sun:['#fff4e0','#ffb27a'],y:.34,scene:'jazz',ground:'pave',fx:'stars'},       // Jazz: Grossstadtnacht mit Neonschild
+ {sky:['#22386f','#6d86c8','#f9d3a8'],sun:['#fff3d6','#ffcf8a'],y:.3,scene:'bremen',ground:'cobble',fx:''}          // Bremen 4: Skyline mit Dom, Rathaus, Roland
 ];
 const SCN_OFF={sky:['#2b2350','#7a5c9e','#f2b8a2'],sun:['#ffe9d6','#ff8a7a'],y:.04,scene:'lighthouse',ground:'sea',fx:'stars'}; // Aus: Leuchtturm
 // Rad-Reihenfolge nach Stimmung: links ruhig, über oben steigend, rechts wild (ST, LIVE, SCN bleiben deckungsgleich)
-{ const ORDER=['Leerlauf','Saxo FM','Samtgroove','Morgentau','Palmenwind','Staubpiste','Lametta FM','Sol y Calle','Glitzer FM','Spiegelkugel','Sangria FM','Neonpuls','Blockbeat','Kurzschluss','Asphalt FM'];
+{ const ORDER=['Leerlauf','Saxo FM','Samtgroove','Morgentau','Bremen 4','Palmenwind','Staubpiste','Lametta FM','Sol y Calle','Glitzer FM','Spiegelkugel','Sangria FM','Neonpuls','Blockbeat','Kurzschluss','Asphalt FM'];
   const idx=ORDER.map(n=>ST.findIndex(x=>x.name===n));
   if(idx.length===ST.length&&idx.every(i=>i>=0)&&new Set(idx).size===idx.length){ const a=idx.map(i=>ST[i]),b=idx.map(i=>LIVE[i]),c=idx.map(i=>SCN[i]); ST.splice(0,ST.length,...a); LIVE.splice(0,LIVE.length,...b); SCN.splice(0,SCN.length,...c); } }
 const N=ST.length+1;            // letzter Eintrag im Rad: Radio aus
@@ -462,6 +469,7 @@ const GLY={
  'Lo-Fi':'<path d="M80,144v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V128H64A16,16,0,0,1,80,144Zm112-16a16,16,0,0,0-16,16v40a16,16,0,0,0,16,16h16a16,16,0,0,0,16-16V128Z" opacity="0.2"/><path d="M201.89,54.66A104.08,104.08,0,0,0,24,128v56a24,24,0,0,0,24,24H64a24,24,0,0,0,24-24V144a24,24,0,0,0-24-24H40.36A88,88,0,0,1,128,40h.67a87.71,87.71,0,0,1,87,80H192a24,24,0,0,0-24,24v40a24,24,0,0,0,24,24h16a24,24,0,0,0,24-24V128A103.41,103.41,0,0,0,201.89,54.66ZM64,136a8,8,0,0,1,8,8v40a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V136Zm152,48a8,8,0,0,1-8,8H192a8,8,0,0,1-8-8V144a8,8,0,0,1,8-8h24Z"/>',
  'Partyhits':'<path d="M200,72l-72,72L56,72Z" opacity="0.2"/><path d="M237.66,45.66A8,8,0,0,0,232,32H24a8,8,0,0,0-5.66,13.66L120,147.31V208H88a8,8,0,0,0,0,16h80a8,8,0,0,0,0-16H136V147.31ZM75.31,80H180.69L128,132.69ZM212.69,48l-16,16H59.31l-16-16Z"/>',
  'Weihnachten':'<path d="M32,192l56-72H48L128,16l80,104H168l56,72Z" opacity="0.2"/><path d="M230.31,187.09,184.36,128H208a8,8,0,0,0,6.34-12.88l-80-104a8,8,0,0,0-12.68,0l-80,104A8,8,0,0,0,48,128H71.64L25.69,187.09A8,8,0,0,0,32,200h88v40a8,8,0,0,0,16,0V200h88a8,8,0,0,0,6.31-12.91ZM48.36,184l46-59.09A8,8,0,0,0,88,112H64.25L128,29.12,191.75,112H168a8,8,0,0,0-6.31,12.91L207.64,184Z"/>',
+ 'Pop & Rock':'<path d="M 35.4 172.4 C 46.5 161.4 59.4 150.3 66.7 143.0 L 63.0 111.7 L 75.9 133.8 L 85.1 109.9 L 88.8 137.5 C 98.0 148.5 103.5 166.9 112.7 172.4 C 134.8 176.1 167.9 176.1 193.7 172.4 C 212.1 172.4 223.1 183.5 221.3 198.2 L 228.6 238.7 L 221.3 240.5 L 215.8 209.2 L 219.4 225.8 L 217.6 246.0 L 202.9 246.0 L 202.9 227.6 C 201.0 218.4 197.4 212.9 190.0 211.1 C 167.9 216.6 144.0 214.7 133.0 212.9 L 134.8 246.0 L 120.1 246.0 L 120.1 216.6 L 114.6 216.6 L 112.7 246.0 L 98.0 246.0 L 99.8 211.1 C 94.3 200.0 88.8 190.8 79.6 185.3 C 70.4 189.0 53.8 190.8 42.8 189.0 C 37.3 187.1 33.6 181.6 35.4 172.4 Z M 91.4 123.4 C 95.0 116.2 102.2 112.6 109.4 110.8 L 113.0 96.4 L 123.8 109.0 C 131.0 110.8 140.0 112.6 147.2 116.2 C 167.0 121.6 190.4 118.0 208.4 119.8 C 221.0 121.6 224.6 130.6 221.0 137.8 C 219.2 146.8 213.8 154.0 210.2 163.0 L 213.8 172.0 L 197.6 172.0 L 201.2 157.6 C 199.4 152.2 197.6 148.6 194.0 145.0 C 176.0 139.6 158.0 137.8 147.2 139.6 L 143.6 157.6 L 145.4 172.0 L 131.0 172.0 L 132.8 155.8 L 131.0 141.4 C 123.8 143.2 116.6 137.8 113.0 132.4 C 105.8 134.2 98.6 134.2 95.0 130.6 C 92.3 128.8 91.4 126.1 91.4 123.4 Z M 214.0 120.2 L 215.6 119.5 L 217.7 118.6 L 220.1 117.6 L 222.4 116.5 L 224.5 115.3 L 226.0 114.0 L 227.2 112.7 L 228.4 110.9 L 229.5 109.0 L 230.3 107.1 L 230.8 105.2 L 231.1 103.7 L 230.9 102.2 L 230.3 100.5 L 229.3 98.6 L 228.2 96.8 L 227.2 95.1 L 226.5 93.9 L 229.9 91.7 L 230.6 92.8 L 231.8 94.3 L 233.2 96.2 L 234.5 98.5 L 235.6 100.9 L 236.1 103.5 L 235.9 106.1 L 235.5 108.6 L 234.6 111.2 L 233.4 113.8 L 232.1 116.1 L 230.5 118.4 L 228.3 120.3 L 225.7 122.1 L 223.1 123.6 L 220.6 124.8 L 218.6 125.8 L 217.2 126.6 Z M 115.6 85.4 C 117.4 78.2 124.6 74.6 131.8 74.6 L 130.0 62.0 L 137.2 71.0 L 144.4 62.0 L 146.2 76.4 C 158.8 78.2 180.4 76.4 193.0 83.6 C 203.8 90.8 205.6 98.0 202.0 105.2 L 205.6 116.0 L 191.2 116.0 L 191.2 107.0 C 182.2 101.6 166.0 101.6 153.4 105.2 L 153.4 116.0 L 139.0 116.0 L 139.0 101.6 C 131.8 101.6 124.6 96.2 121.0 92.6 C 118.3 91.7 115.6 89.0 115.6 85.4 Z M 198.8 87.9 L 200.5 87.3 L 202.6 86.5 L 205.0 85.5 L 207.4 84.3 L 209.4 83.2 L 210.7 81.9 L 211.7 80.4 L 212.7 78.4 L 213.4 76.0 L 214.0 73.7 L 214.2 71.5 L 214.2 69.6 L 213.8 67.9 L 212.8 66.1 L 211.5 64.2 L 210.0 62.3 L 208.8 60.7 L 207.8 59.5 L 210.6 57.3 L 211.5 58.4 L 212.9 59.8 L 214.6 61.6 L 216.2 63.8 L 217.7 66.2 L 218.6 68.8 L 218.8 71.5 L 218.7 74.3 L 218.2 77.2 L 217.5 80.1 L 216.4 82.8 L 214.9 85.3 L 212.8 87.5 L 210.2 89.3 L 207.6 90.7 L 205.0 92.0 L 202.9 92.9 L 201.6 93.7 Z M 120.4 45.0 L 127.6 41.4 C 127.6 36.0 129.4 32.4 133.0 30.6 L 134.8 25.2 L 138.4 30.6 L 142.0 26.1 L 143.8 32.4 C 145.6 37.8 143.8 43.2 140.2 46.8 C 145.6 52.2 154.6 54.0 161.8 55.8 C 172.6 52.2 183.4 43.2 192.4 30.6 L 197.8 34.2 L 194.2 41.4 L 201.4 43.2 L 194.2 50.4 L 199.6 55.8 C 188.8 63.0 176.2 66.6 163.6 68.4 C 151.0 70.2 140.2 68.4 133.0 63.0 C 127.6 57.6 131.2 50.4 133.0 48.6 C 129.4 46.8 125.8 46.8 124.0 46.8 Z M 149.2 66.6 L 152.8 66.6 L 152.8 77.4 L 149.2 77.4 Z M 158.2 66.6 L 161.8 66.6 L 161.8 77.4 L 158.2 77.4 Z"/>',
  'Jazz':'<path d="M184,40V144H144V40ZM72,144h40V40H72Z" opacity="0.2"/><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM80,48h24v88H80Zm32,104a8,8,0,0,0,8-8V48h16v96a8,8,0,0,0,8,8h8v56H104V152Zm40-16V48h24v88ZM48,48H64v96a8,8,0,0,0,8,8H88v56H48ZM208,208H168V152h16a8,8,0,0,0,8-8V48h16V208Z"/>'
 };
 function wlogo(st){ return `<g class="gl" transform="scale(.18) translate(-128,-128)">${GLY[st.genre]||''}</g>`; }
@@ -623,7 +631,7 @@ const TRIM={
  'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432':.5,'https://stream.bmr-radio.de/ballermann-radio.mp3':.5,'https://audio.bmr-radio.de/top30/mp3-192/Webplayer':.54,
  'https://stream.backroadcountryradio.com/listen/backroad/radio.mp3':.56,'https://icecast.radiofrance.fr/fipelectro-midfi.mp3':.89,'https://icecast.radiofrance.fr/fipreggae-midfi.mp3':.9,'https://icecast.radiofrance.fr/fipgroove-midfi.mp3':.73,
  'https://kexp.streamguys1.com/kexp160.aac':1,'https://stream.srg-ssr.ch/m/rsj/mp3_128':1,'https://icecast.radiofrance.fr/fipjazz-midfi.mp3':.63,'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3':.9,
- 'https://streams.90s90s.de/pop/mp3-192/streams.90s90s.de/':.38,'https://stream.sunshine-live.de/90er/mp3-192/stream.sunshine-live.de':.53,'https://channels.fluxfm.de/90s/stream.mp3':.51,'https://icecast.walmradio.com:8443/christmas':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
+ 'https://streams.90s90s.de/pop/mp3-192/streams.90s90s.de/':.38,'https://stream.sunshine-live.de/90er/mp3-192/stream.sunshine-live.de':.53,'https://channels.fluxfm.de/90s/stream.mp3':.51,'https://icecast.radiobremen.de/rb/bremenvier/live/mp3/128/stream.mp3':.84,'https://icecast.walmradio.com:8443/christmas':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
 };
 let curTrim=1;
 function trimFor(u){ return TRIM[u]!==undefined?TRIM[u]:1; }
@@ -731,6 +739,8 @@ function drawPalm(x,base,h,lean,col,a){
   rx.beginPath(); rx.arc(tx,ty+h*.02,h*.035,0,6.283); rx.fill();
   rx.restore();
 }
+const ROL=new Path2D('M12.0 112.0L48.0 112.0L50.0 124.0L10.0 124.0ZM22.0 40.0L38.0 40.0L41.0 92.0L19.0 92.0ZM14.0 42.0L46.0 42.0L52.0 100.0L8.0 100.0ZM21.0 92.0L29.0 92.0L29.0 112.0L21.0 112.0ZM31.0 92.0L39.0 92.0L39.0 112.0L31.0 112.0ZM38.0 29.0L37.7 31.3L36.9 33.5L35.7 35.4L34.0 36.8L32.1 37.7L30.0 38.0L27.9 37.7L26.0 36.8L24.3 35.4L23.1 33.5L22.3 31.3L22.0 29.0L22.3 26.7L23.1 24.5L24.3 22.6L26.0 21.2L27.9 20.3L30.0 20.0L32.1 20.3L34.0 21.2L35.7 22.6L36.9 24.5L37.7 26.7ZM21.0 24.0L23.0 14.0L27.0 20.0L30.0 12.0L33.0 20.0L37.0 14.0L39.0 24.0ZM26.0 36.0L34.0 36.0L36.0 44.0L24.0 44.0ZM2.0 52.0L18.0 52.0L18.0 74.0L10.0 86.0L2.0 74.0ZM44.0 56.0L47.0 56.0L47.0 100.0L44.0 100.0ZM38.0 100.0L53.0 100.0L53.0 103.0L38.0 103.0ZM44.0 103.0L47.0 103.0L47.0 110.0L44.0 110.0ZM40.0 56.0L44.0 60.0L44.0 68.0L40.0 72.0Z');
+const STM=new Path2D('M 35.4 172.4 C 46.5 161.4 59.4 150.3 66.7 143.0 L 63.0 111.7 L 75.9 133.8 L 85.1 109.9 L 88.8 137.5 C 98.0 148.5 103.5 166.9 112.7 172.4 C 134.8 176.1 167.9 176.1 193.7 172.4 C 212.1 172.4 223.1 183.5 221.3 198.2 L 228.6 238.7 L 221.3 240.5 L 215.8 209.2 L 219.4 225.8 L 217.6 246.0 L 202.9 246.0 L 202.9 227.6 C 201.0 218.4 197.4 212.9 190.0 211.1 C 167.9 216.6 144.0 214.7 133.0 212.9 L 134.8 246.0 L 120.1 246.0 L 120.1 216.6 L 114.6 216.6 L 112.7 246.0 L 98.0 246.0 L 99.8 211.1 C 94.3 200.0 88.8 190.8 79.6 185.3 C 70.4 189.0 53.8 190.8 42.8 189.0 C 37.3 187.1 33.6 181.6 35.4 172.4 Z M 91.4 123.4 C 95.0 116.2 102.2 112.6 109.4 110.8 L 113.0 96.4 L 123.8 109.0 C 131.0 110.8 140.0 112.6 147.2 116.2 C 167.0 121.6 190.4 118.0 208.4 119.8 C 221.0 121.6 224.6 130.6 221.0 137.8 C 219.2 146.8 213.8 154.0 210.2 163.0 L 213.8 172.0 L 197.6 172.0 L 201.2 157.6 C 199.4 152.2 197.6 148.6 194.0 145.0 C 176.0 139.6 158.0 137.8 147.2 139.6 L 143.6 157.6 L 145.4 172.0 L 131.0 172.0 L 132.8 155.8 L 131.0 141.4 C 123.8 143.2 116.6 137.8 113.0 132.4 C 105.8 134.2 98.6 134.2 95.0 130.6 C 92.3 128.8 91.4 126.1 91.4 123.4 Z M 214.0 120.2 L 215.6 119.5 L 217.7 118.6 L 220.1 117.6 L 222.4 116.5 L 224.5 115.3 L 226.0 114.0 L 227.2 112.7 L 228.4 110.9 L 229.5 109.0 L 230.3 107.1 L 230.8 105.2 L 231.1 103.7 L 230.9 102.2 L 230.3 100.5 L 229.3 98.6 L 228.2 96.8 L 227.2 95.1 L 226.5 93.9 L 229.9 91.7 L 230.6 92.8 L 231.8 94.3 L 233.2 96.2 L 234.5 98.5 L 235.6 100.9 L 236.1 103.5 L 235.9 106.1 L 235.5 108.6 L 234.6 111.2 L 233.4 113.8 L 232.1 116.1 L 230.5 118.4 L 228.3 120.3 L 225.7 122.1 L 223.1 123.6 L 220.6 124.8 L 218.6 125.8 L 217.2 126.6 Z M 115.6 85.4 C 117.4 78.2 124.6 74.6 131.8 74.6 L 130.0 62.0 L 137.2 71.0 L 144.4 62.0 L 146.2 76.4 C 158.8 78.2 180.4 76.4 193.0 83.6 C 203.8 90.8 205.6 98.0 202.0 105.2 L 205.6 116.0 L 191.2 116.0 L 191.2 107.0 C 182.2 101.6 166.0 101.6 153.4 105.2 L 153.4 116.0 L 139.0 116.0 L 139.0 101.6 C 131.8 101.6 124.6 96.2 121.0 92.6 C 118.3 91.7 115.6 89.0 115.6 85.4 Z M 198.8 87.9 L 200.5 87.3 L 202.6 86.5 L 205.0 85.5 L 207.4 84.3 L 209.4 83.2 L 210.7 81.9 L 211.7 80.4 L 212.7 78.4 L 213.4 76.0 L 214.0 73.7 L 214.2 71.5 L 214.2 69.6 L 213.8 67.9 L 212.8 66.1 L 211.5 64.2 L 210.0 62.3 L 208.8 60.7 L 207.8 59.5 L 210.6 57.3 L 211.5 58.4 L 212.9 59.8 L 214.6 61.6 L 216.2 63.8 L 217.7 66.2 L 218.6 68.8 L 218.8 71.5 L 218.7 74.3 L 218.2 77.2 L 217.5 80.1 L 216.4 82.8 L 214.9 85.3 L 212.8 87.5 L 210.2 89.3 L 207.6 90.7 L 205.0 92.0 L 202.9 92.9 L 201.6 93.7 Z M 120.4 45.0 L 127.6 41.4 C 127.6 36.0 129.4 32.4 133.0 30.6 L 134.8 25.2 L 138.4 30.6 L 142.0 26.1 L 143.8 32.4 C 145.6 37.8 143.8 43.2 140.2 46.8 C 145.6 52.2 154.6 54.0 161.8 55.8 C 172.6 52.2 183.4 43.2 192.4 30.6 L 197.8 34.2 L 194.2 41.4 L 201.4 43.2 L 194.2 50.4 L 199.6 55.8 C 188.8 63.0 176.2 66.6 163.6 68.4 C 151.0 70.2 140.2 68.4 133.0 63.0 C 127.6 57.6 131.2 50.4 133.0 48.6 C 129.4 46.8 125.8 46.8 124.0 46.8 Z M 149.2 66.6 L 152.8 66.6 L 152.8 77.4 L 149.2 77.4 Z M 158.2 66.6 L 161.8 66.6 L 161.8 77.4 L 158.2 77.4 Z');
 function drawPalmPro(x,base,h,lean,a,ph){
   // Palme mit verjuengtem, geringeltem Stamm, Kokosnuessen und gefiederten Wedeln
   rx.save(); rx.globalAlpha=a; rx.lineCap='round'; rx.lineJoin='round';
@@ -932,6 +942,44 @@ function drawScene(name,hy,a){
       for(let k=0;k<14;k++){ const u=k/14,y=b-h*(.1+u*.78),wd=h*(.3*(1-u)+.02),xx=x+Math.sin(k*2.4)*wd,on=Math.sin(T*3+k*1.7)>-.4; rx.fillStyle=rgb(cl[k%4],on?1:.35); rx.beginPath(); rx.arc(xx,y,3,0,6.283); rx.fill(); }
       rx.fillStyle='#ffe27a'; rx.beginPath(); for(let k=0;k<10;k++){ const rr=k%2?h*.022:h*.05,a=k*Math.PI/5-Math.PI/2; rx.lineTo(x+Math.cos(a)*rr,b-h*.98+Math.sin(a)*rr); } rx.fill(); }
     break; }
+  case 'bremen': {
+    const B=hy+1,u=H*.01;
+    // Haeuserzeile mit Giebeln (hinten)
+    rx.fillStyle=rgb(far,.9);
+    for(let i=0;i<15;i++){ const x=W*i/15,w=W/15+1,h=u*(2.2+1.5*Math.abs(Math.sin(i*2.3)));
+      rx.beginPath(); rx.moveTo(x,B); rx.lineTo(x,B-h); rx.lineTo(x+w/2,B-h-w*.4); rx.lineTo(x+w,B-h); rx.lineTo(x+w,B); rx.fill(); }
+    rx.fillStyle=rgb(col); const lit=rgb(now.sun[1],.85);
+    // St.-Petri-Dom mit zwei Tuermen
+    { const dx=W*.07;
+      rx.fillRect(dx+W*.05,B-u*6,W*.17,u*6);
+      rx.beginPath(); rx.moveTo(dx+W*.05,B-u*6); rx.lineTo(dx+W*.135,B-u*8.6); rx.lineTo(dx+W*.22,B-u*6); rx.fill();
+      [[0,13,8.5],[W*.058,12.4,8]].forEach(([o,h,sp])=>{ const x=dx+o,w=W*.045;
+        rx.fillRect(x,B-u*h,w,u*h);
+        rx.beginPath(); rx.moveTo(x-w*.06,B-u*h); rx.lineTo(x+w/2,B-u*(h+sp)); rx.lineTo(x+w*1.06,B-u*h); rx.fill();
+        rx.fillRect(x+w/2-.7,B-u*(h+sp)-u*1.2,1.4,u*1.2); });
+      rx.fillStyle=lit; rx.fillRect(dx+W*.018,B-u*10,W*.009,u*2); rx.fillRect(dx+W*.076,B-u*9.6,W*.009,u*2); rx.fillStyle=rgb(col); }
+    // Rathaus mit drei Renaissance-Giebeln
+    { const x0=W*.37,w=W*.27;
+      rx.fillRect(x0,B-u*6.6,w,u*6.6); rx.fillRect(x0-w*.01,B-u*7.1,w*1.02,u*.7);
+      [[.2,.19,3.4],[.5,.25,5.4],[.8,.19,3.4]].forEach(([c,gw,gh])=>{ const cx=x0+w*c,ww=w*gw,st=5,sh=u*gh/st;
+        rx.beginPath(); rx.moveTo(cx-ww/2,B-u*7.1);
+        for(let k=0;k<st;k++){ const f=1-k/st*.8; rx.lineTo(cx-ww/2*f,B-u*7.1-sh*(k+1)); rx.lineTo(cx-ww/2*(f-.16),B-u*7.1-sh*(k+1)); }
+        rx.lineTo(cx,B-u*(7.1+gh+1.2));
+        for(let k=st-1;k>=0;k--){ const f=1-k/st*.8; rx.lineTo(cx+ww/2*(f-.16),B-u*7.1-sh*(k+1)); rx.lineTo(cx+ww/2*f,B-u*7.1-sh*(k+1)); }
+        rx.lineTo(cx+ww/2,B-u*7.1); rx.closePath(); rx.fill(); rx.fillRect(cx-.7,B-u*(7.1+gh+3),1.4,u*1.9); });
+      rx.fillStyle=lit; for(let k=0;k<9;k++){ rx.fillRect(x0+w*(.06+k*.105),B-u*4.8,u*.8,u*1.7); } rx.fillStyle=rgb(col);
+    }
+    // Liebfrauenkirche
+    { const x=W*.73,w=W*.036; rx.fillRect(x,B-u*12,w,u*12); rx.beginPath(); rx.moveTo(x-w*.06,B-u*12); rx.lineTo(x+w/2,B-u*20.5); rx.lineTo(x+w*1.06,B-u*12); rx.fill();
+      rx.fillRect(x-W*.04,B-u*5,W*.04,u*5); rx.beginPath(); rx.moveTo(x-W*.045,B-u*5); rx.lineTo(x-W*.02,B-u*7); rx.lineTo(x,B-u*5); rx.fill(); }
+    // Boettcherstrasse: Glockenspiel-Giebel
+    { const x=W*.83,w=W*.05; rx.beginPath(); rx.moveTo(x,B); rx.lineTo(x,B-u*7); rx.lineTo(x+w/2,B-u*11.5); rx.lineTo(x+w,B-u*7); rx.lineTo(x+w,B); rx.fill();
+      rx.fillStyle=lit; rx.fillRect(x+w/2-u*.5,B-u*6,u,u*1.8); rx.fillStyle=rgb(col); }
+    // Stadtmusikanten (Esel, Hund, Katze, Hahn) zwischen Dom und Rathaus
+    // Vordergrund auf dem Marktplatz: Stadtmusikanten links, Roland rechts
+    { const sc=u*12.5/236; rx.save(); rx.translate(W*.22-128*sc,hy+H*.075-236*sc); rx.scale(sc,sc); rx.strokeStyle=rgb(now.sun[0],.85); rx.lineWidth=2.6/sc; rx.lineJoin='round'; rx.stroke(STM); rx.fill(STM); rx.restore(); }
+    { const sc=u*14/124; rx.save(); rx.translate(W*.88-30*sc,hy+H*.09-124*sc); rx.scale(sc,sc); rx.strokeStyle=rgb(now.sun[0],.85); rx.lineWidth=2.6/sc; rx.lineJoin='round'; rx.stroke(ROL); rx.fill(ROL); rx.restore(); }
+    break; }
   case 'jazz': {
     // Haeuser links und rechts, Fenster, Neonschild JAZZ
     [[.02,.27,.2],[.7,.28,.27]].forEach(([ux,uw,uh],bi)=>{ const x=W*ux,w=W*uw,h=H*uh,b=hy+H*.03;
@@ -990,6 +1038,18 @@ function drawGround(type,hy,a){
       const yy=hy+3+k*k*.55*(H-hy)/400, w=(30+k*9)*(.6+.4*Math.sin(T*(type==='lake'?.6:1.6)+k*1.7)), ww=Math.max(1,1+k*.12);
       rx.fillStyle=rgb(mix(now.sun[0],now.sun[1],k/26),.55-k*.015); rx.fillRect(sx-w/2+Math.sin(T+k)*(type==='lake'?2:6),yy,w,ww);
     }
+  } else if(type==='cobble'){
+    const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[2],[196,184,176],.55))); g.addColorStop(1,rgb(mix(now.sky[0],[84,74,96],.6)));
+    rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
+    rx.strokeStyle='rgba(36,24,48,.2)'; rx.lineWidth=1; rx.beginPath();
+    const rows=26;
+    for(let k=0;k<rows;k++){
+      const f0=Math.pow(k/rows,1.8),f1=Math.pow((k+1)/rows,1.8),y0=hy+f0*(H-hy),y1=hy+f1*(H-hy),w=10+k*4.2,off=(k%2)*w/2;
+      rx.moveTo(0,y1); rx.lineTo(W,y1);
+      for(let x=-off;x<W;x+=w){ rx.moveTo(x,y0); rx.lineTo(x,y1); }
+    }
+    rx.stroke();
+    const sh=rx.createLinearGradient(0,hy,0,hy+H*.12); sh.addColorStop(0,rgb(now.sun[1],.3)); sh.addColorStop(1,rgb(now.sun[1],0)); rx.fillStyle=sh; rx.fillRect(0,hy,W,H*.12);
   } else if(type==='snow'){
     const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[2],[235,243,255],.7))); g.addColorStop(1,rgb(mix(now.sky[0],[200,220,245],.55)));
     rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
@@ -1151,6 +1211,9 @@ function drawExtra(name,hy,a){
     for(let i=0;i<40;i++){ const x=W*RN(i,1)+Math.sin(T+i)*10, y=((T*.07*(.7+.6*RN(i,3))+RN(i,2))%1)*H*.6;
       rx.save(); rx.translate(x,y); rx.rotate(T*3+i); rx.fillStyle=rgb(PAL[i%5],.9); rx.fillRect(-2.5,-1.2,5,2.4); rx.restore(); }
     rx.strokeStyle='rgba(255,255,255,.6)'; rx.lineWidth=2; rx.beginPath(); for(let x=0;x<=W;x+=10){ const y=hy+H*.04+Math.sin(x*.03+T*1.2)*3+Math.sin(T*.5)*H*.008; x?rx.lineTo(x,y):rx.moveTo(x,y); } rx.stroke();
+    break; }
+  case 'bremen': { // Moewen ueber der Weser
+    for(let i=0;i<3;i++){ const x=W*(.3+i*.12)+Math.cos(T*.32+i*2.1)*W*.14, y=hy-H*.16-i*H*.018+Math.sin(T*.6+i*1.7)*H*.02; gull(x,y,5.5,T*6.5+i*2,cs); }
     break; }
   case 'jazz': { // Noten steigen aus dem Fenster, Rauch der Zigarette
     { const u=H*.016, sx=W*.3+u*3.9, sy=hy+H*.13-u*6.7; for(let k=0;k<7;k++){ const t=((T/6+k/7)%1); rx.fillStyle=`rgba(230,230,245,${.22*(1-t)})`; rx.beginPath(); rx.arc(sx+Math.sin(t*7+k)*u*1.2+t*u*2,sy-t*u*9,u*(.35+t*1.3),0,6.283); rx.fill(); } }
