@@ -53,6 +53,7 @@ body{
 }
 .badge{width:52px;height:52px;filter:drop-shadow(0 8px 14px rgba(36,20,51,.25))}
 .badge svg{width:100%;height:100%;display:block}
+.badge .gl{fill:#241433}
 .meta{min-width:0}
 .meta.flip{animation:flip .42s cubic-bezier(.2,.9,.3,1)}
 @keyframes flip{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -589,7 +590,7 @@ function paintDeck(){
   $('#sname').textContent=st?st.name:'Radio aus'; fitText($('#sname'));
   $('#sgenre').textContent=st?st.genre:'Knopf halten, Sender wählen';
   $('#freq').textContent=st?st.freq.toFixed(1):'--.-';
-  badge.innerHTML=`<svg viewBox="-30 -30 60 60">${st?logo(st):OFFLOGO}</svg>`;
+  badge.innerHTML=`<svg viewBox="-30 -30 60 60">${st?`<rect x="-27" y="-27" width="54" height="54" rx="15" fill="${st.color}"/><g class="gl" transform="scale(.185) translate(-128,-128)">${GLY[st.genre]||''}</g>`:OFFLOGO}</svg>`;
   needle.classList.toggle('off',!st); if(st) needle.style.left=pc(st.freq);
   meta.classList.remove('flip'); void meta.offsetWidth; meta.classList.add('flip');
 }
