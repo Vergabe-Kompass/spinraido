@@ -1295,13 +1295,32 @@ function sleepLabel(){ moont.textContent=sleepEnd?fmtLeft(sleepEnd-Date.now()):'
 function resetVol(){ clearInterval(sleepFade); sleepFade=null; try{ player.volume=curTrim; }catch(e){} if(master&&ctx) master.gain.value=.55; }
 function setSleep(m){
   clearInterval(sleepTick); resetVol(); sleepMin=m; paintSleepBtns();
-  if(!m){ sleepEnd=0; sleepLabel(); return; }
+  if(!m){ sleepEnd=0; stopSleepWorker(); sleepLabel(); return; }
   sleepEnd=Date.now()+m*60000; sleepLabel();
-  sleepTick=setInterval(()=>{
-    const left=sleepEnd-Date.now(); sleepLabel();
-    if(left<=0){ clearInterval(sleepTick); sleepEnd=0; sleepMin=0; paintSleepBtns(); sleepLabel(); fadeOutEnd(); }
-  },1000);
+  sleepTick=setInterval(sleepCheck,1000); startSleepWorker();
 }
+/* Der Timer darf nicht nur an setInterval hängen: Handy gesperrt/App im Hintergrund = Seite wird gedrosselt oder eingefroren.
+   Darum wird die Zeit (Date.now) an mehreren Stellen geprüft: Intervall, Worker-Takt, Audio-Takt, Rückkehr in den Vordergrund. */
+function sleepCheck(){
+  if(!sleepEnd) return;
+  const left=sleepEnd-Date.now(); sleepLabel();
+  if(left>0) return;
+  clearInterval(sleepTick); stopSleepWorker(); sleepEnd=0; sleepMin=0; paintSleepBtns(); sleepLabel();
+  if(document.hidden){ resetVol(); setStation(-1); } else fadeOutEnd();
+}
+let sleepWorker=null;
+function startSleepWorker(){
+  stopSleepWorker();
+  try{
+    const u=URL.createObjectURL(new Blob(['setInterval(function(){postMessage(1)},1000)'],{type:'text/javascript'}));
+    sleepWorker=new Worker(u); sleepWorker.onmessage=sleepCheck; URL.revokeObjectURL(u);
+  }catch(e){ sleepWorker=null; }
+}
+function stopSleepWorker(){ if(sleepWorker){ try{ sleepWorker.terminate(); }catch(e){} sleepWorker=null; } }
+player.addEventListener('timeupdate',sleepCheck);
+document.addEventListener('visibilitychange',sleepCheck);
+addEventListener('pageshow',sleepCheck);
+addEventListener('focus',sleepCheck);
 function fadeOutEnd(){
   let k=0; const N=20;
   clearInterval(sleepFade);
