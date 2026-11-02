@@ -275,11 +275,16 @@ const ST=[
   prog:[[0,'maj'],[5,'maj'],[7,'dom7'],[0,'maj']],kick:[0,8],snare:[4,12],sv:.4,hat:[0,2,4,6,8,10,12,14],hv:.5,ohat:[14],
   bass:{w:'triangle',v:.28,cut:700,oct:-12,p:[[0,0,3],[8,7,3]]},
   comp:{w:'triangle',v:.06,cut:2400,len:1.4,steps:[0,6,8,14],pl:true,o:12},
-  arp:{w:'sine',v:.06,cut:4200,len:.5,steps:E8,pat:[0,2,1,2,0,2,1,2],o:24,pl:true}}
+  arp:{w:'sine',v:.06,cut:4200,len:.5,steps:E8,pat:[0,2,1,2,0,2,1,2],o:24,pl:true}},
+ {name:'Saxo FM',genre:'Jazz',mono:'SX',shape:'pent',color:'#c98a2b',freq:95.9,tempo:96,swing:.28,key:46,
+  prog:[[2,'min7'],[7,'dom7'],[0,'maj7'],[9,'dom7']],kick:[0,10],snare:[4,12],sv:.2,hat:[0,3,4,7,8,11,12,15],hv:.4,
+  bass:{w:'triangle',v:.34,cut:700,oct:-12,p:[[0,0,3],[4,4,3],[8,7,3],[12,5,3]]},
+  comp:{w:'sine',v:.07,cut:2000,len:1.2,steps:[0,7,10],pl:true,o:12},
+  arp:{w:'triangle',v:.045,cut:3200,len:.6,steps:E8,pat:[0,2,1,3,2,1,0,1],o:24,pl:true}}
 ];
 /* Live-Streams pro Sender, in der Reihenfolge der Sender oben. Mehrere Adressen = Ersatz, falls eine ausfällt. */
 const LIVE=[
- [{n:'MDR Sputnik Rock',u:'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3'},{n:'Radio Paradise Rock Mix',u:'https://stream.radioparadise.com/rock-128'},{n:'Radio Paradise',u:'https://stream.radioparadise.com/mp3-128'}],
+ [{n:'Radio BOB',u:'https://streams.radiobob.de/bob-live/mp3-192/mediaplayer/'},{n:'MDR Sputnik Rock',u:'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3'},{n:'Radio Paradise Rock Mix',u:'https://stream.radioparadise.com/rock-128'},{n:'Radio Paradise',u:'https://stream.radioparadise.com/mp3-128'}],
  [{n:'1LIVE',u:'https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3'},{n:'N-JOY',u:'https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3'}],
  [{n:'Bremen NEXT',u:'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3'},{n:'DASDING',u:'https://liveradio.swr.de/d9zadj3/dasding/'}],
  [{n:'MDR Sputnik',u:'https://mdr-284330-0.sslcast.mdr.de/mdr/284330/0/mp3/high/stream.mp3'},{n:'Fritz',u:'https://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid'},{n:'Známka Punku',u:'https://ice.abradio.cz/znamkapunku128.mp3'}],
@@ -294,7 +299,8 @@ const LIVE=[
  [{n:'Ballermann Radio',u:'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432'},
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
   {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}],
- [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},{n:'Christmas FM Non-stop',u:'https://xmas-node1.zip.wf/live.aac'},{n:'Christmas FM Classics',u:'https://christmasfm.cdnstream1.com/2550_128.mp3'}]
+ [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},{n:'Christmas FM Non-stop',u:'https://xmas-node1.zip.wf/live.aac'},{n:'Christmas FM Classics',u:'https://christmasfm.cdnstream1.com/2550_128.mp3'}],
+ [{n:'Radio Swiss Jazz',u:'https://stream.srg-ssr.ch/m/rsj/mp3_128'},{n:'FIP Jazz',u:'https://icecast.radiofrance.fr/fipjazz-midfi.mp3'},{n:'NDR Blue',u:'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3'}]
 ];
 /* Landschaft pro Sender: Himmel (oben, Mitte, Horizont), Sonne (innen, aussen), Sonnenhöhe 0..1, Kulisse, Boden, Effekt */
 const SCN=[
@@ -311,7 +317,8 @@ const SCN=[
  {sky:['#24123f','#7a4bb0','#f0b8ff'],sun:['#ffffff','#d9a6ff'],y:.42,scene:'discoball',ground:'grid',fx:'sparkle'},// Disco: Spiegelkugel über Tanzfläche
  {sky:['#21405a','#5fb3a8','#f7d8a8'],sun:['#fff8e0','#f2a65a'],y:.15,scene:'mountains',ground:'lake',fx:'stars'},// Chillout: Berge am See
  {sky:['#ff5f9e','#ffb36a','#fff07a'],sun:['#ffffff','#ffd23f'],y:.8,scene:'beach',ground:'sea',fx:'sparkle'},    // Partyhits: Strandparty
- {sky:['#0b1740','#2c4f86','#f0b36e'],sun:['#fff6dc','#ffd08a'],y:.3,scene:'xmas',ground:'snow',fx:'snow'}       // Weihnachten: verschneites Dorf
+ {sky:['#0b1740','#2c4f86','#f0b36e'],sun:['#fff6dc','#ffd08a'],y:.3,scene:'xmas',ground:'snow',fx:'snow'},      // Weihnachten: verschneites Dorf
+ {sky:['#090d2b','#2b2a72','#d06aa6'],sun:['#fff4e0','#ffb27a'],y:.34,scene:'jazz',ground:'road',fx:'stars'}        // Jazz: Grossstadtnacht mit Neonschild
 ];
 const SCN_OFF={sky:['#2b2350','#7a5c9e','#f2b8a2'],sun:['#ffe9d6','#ff8a7a'],y:.04,scene:'lighthouse',ground:'sea',fx:'stars'}; // Aus: Leuchtturm
 const N=ST.length+1;            // letzter Eintrag im Rad: Radio aus
@@ -571,7 +578,7 @@ function setMode(m,name){
 function armTimer(ms){ clearTimeout(liveTimer); liveTimer=setTimeout(()=>{ if(mode==='load') nextUrl(); },ms); }
 /* Lautstaerke-Ausgleich: Faktor pro Stream (gemessen, Ziel ca. -18 LUFS).  Hip-Hop-Sender und 1LIVE Plan B: Schaetzwert. */
 const TRIM={
- 'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3':.86,'https://stream.radioparadise.com/rock-128':.33,'https://stream.radioparadise.com/mp3-128':.45,
+ 'https://streams.radiobob.de/bob-live/mp3-192/mediaplayer/':.41,'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3':.86,'https://stream.radioparadise.com/rock-128':.33,'https://stream.radioparadise.com/mp3-128':.45,
  'https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3':.6,'https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3':.9,
  'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3':1,'https://liveradio.swr.de/d9zadj3/dasding/':.72,
  'https://mdr-284330-0.sslcast.mdr.de/mdr/284330/0/mp3/high/stream.mp3':.78,'https://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid':1,'https://ice.abradio.cz/znamkapunku128.mp3':.6,
@@ -585,7 +592,7 @@ const TRIM={
  'https://radio.nia.nc/radio/8020/lofi-hq-stream.aac':.89,'https://radio.cliamp.stream/lofi/stream':.44,
  'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432':.5,'https://stream.bmr-radio.de/ballermann-radio.mp3':.5,'https://audio.bmr-radio.de/top30/mp3-192/Webplayer':.54,
  'https://stream.backroadcountryradio.com/listen/backroad/radio.mp3':.56,'https://icecast.radiofrance.fr/fipelectro-midfi.mp3':.89,'https://icecast.radiofrance.fr/fipreggae-midfi.mp3':.9,'https://icecast.radiofrance.fr/fipgroove-midfi.mp3':.73,
- 'https://kexp.streamguys1.com/kexp160.aac':1,
+ 'https://kexp.streamguys1.com/kexp160.aac':1,'https://stream.srg-ssr.ch/m/rsj/mp3_128':1,'https://icecast.radiofrance.fr/fipjazz-midfi.mp3':.63,'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3':.9,
  'https://icecast.walmradio.com:8443/christmas':.7,'https://xmas-node1.zip.wf/live.aac':.8,'https://christmasfm.cdnstream1.com/2550_128.mp3':.37
 };
 let curTrim=1;
@@ -865,6 +872,20 @@ function drawScene(name,hy,a){
       for(let k=0;k<14;k++){ const u=k/14,y=b-h*(.1+u*.78),wd=h*(.3*(1-u)+.02),xx=x+Math.sin(k*2.4)*wd,on=Math.sin(T*3+k*1.7)>-.4; rx.fillStyle=rgb(cl[k%4],on?1:.35); rx.beginPath(); rx.arc(xx,y,3,0,6.283); rx.fill(); }
       rx.fillStyle='#ffe27a'; rx.beginPath(); for(let k=0;k<10;k++){ const rr=k%2?h*.022:h*.05,a=k*Math.PI/5-Math.PI/2; rx.lineTo(x+Math.cos(a)*rr,b-h*.98+Math.sin(a)*rr); } rx.fill(); }
     break; }
+  case 'jazz': {
+    // Haeuser links und rechts, Fenster, Neonschild JAZZ
+    [[.02,.27,.2],[.7,.28,.27]].forEach(([ux,uw,uh],bi)=>{ const x=W*ux,w=W*uw,h=H*uh,b=hy+H*.03;
+      rx.fillStyle=rgb(col); rx.fillRect(x,b-h,w,h);
+      const cols=4,rows=Math.max(3,Math.round(uh*22));
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ const k=bi*50+r*cols+c, lit=RN(k,1)>.45; if(!lit) continue; const fl=.75+.25*Math.sin(T*.8+k); rx.fillStyle=`rgba(255,205,110,${fl})`; rx.fillRect(x+w*(.1+c*.22),b-h+h*(.08+r*(.84/rows)),w*.13,h*.5/rows); } });
+    { const x=W*.84,y=hy-H*.1,fs=Math.max(15,W*.062), fl=(Math.sin(T*7)>-.92)?1:.25;
+      rx.save(); rx.font=`700 ${fs}px Unbounded, Figtree, sans-serif`; rx.textAlign='center'; rx.textBaseline='middle';
+      rx.fillStyle=`rgba(255,80,190,${.18*fl})`; rx.fillRect(x-fs*1.9,y-fs*.75,fs*3.8,fs*1.5);
+      rx.shadowColor='#ff3fb4'; rx.shadowBlur=14*fl; rx.fillStyle=`rgba(255,170,230,${fl})`; rx.fillText('JAZZ',x,y); rx.restore(); }
+    // Strassenlaterne
+    { const lx=W*.46,lb=hy+H*.03,lh=H*.17; rx.fillStyle=rgb(col); rx.fillRect(lx-1.5,lb-lh,3,lh); rx.beginPath(); rx.moveTo(lx-6,lb-lh+1); rx.lineTo(lx+6,lb-lh+1); rx.lineTo(lx+3,lb-lh-6); rx.lineTo(lx-3,lb-lh-6); rx.fill();
+      const g=rx.createRadialGradient(lx,lb-lh+3,1,lx,lb-lh+3,H*.12); g.addColorStop(0,'rgba(255,215,140,.55)'); g.addColorStop(1,'rgba(255,215,140,0)'); rx.fillStyle=g; rx.fillRect(lx-H*.12,lb-lh-H*.1,H*.24,H*.24); }
+    break; }
   case 'lighthouse': {
     rx.beginPath(); rx.moveTo(W*.6,hy+2); rx.quadraticCurveTo(W*.78,hy-H*.05,W*1.02,hy-H*.04); rx.lineTo(W*1.02,hy+2); rx.fill();
     const lx=W*.8,base=hy-H*.035,h=H*.17,w0=W*.05,w1=W*.03;
@@ -1046,6 +1067,12 @@ function drawExtra(name,hy,a){
     for(let i=0;i<40;i++){ const x=W*RN(i,1)+Math.sin(T+i)*10, y=((T*.07*(.7+.6*RN(i,3))+RN(i,2))%1)*H*.6;
       rx.save(); rx.translate(x,y); rx.rotate(T*3+i); rx.fillStyle=rgb(PAL[i%5],.9); rx.fillRect(-2.5,-1.2,5,2.4); rx.restore(); }
     rx.strokeStyle='rgba(255,255,255,.6)'; rx.lineWidth=2; rx.beginPath(); for(let x=0;x<=W;x+=10){ const y=hy+H*.04+Math.sin(x*.03+T*1.2)*3+Math.sin(T*.5)*H*.008; x?rx.lineTo(x,y):rx.moveTo(x,y); } rx.stroke();
+    break; }
+  case 'jazz': { // Noten steigen aus dem Fenster, Dampf aus dem Gullydeckel
+    rx.fillStyle='rgba(255,225,170,1)'; rx.font=`${Math.max(14,W*.05)}px sans-serif`; rx.textAlign='center';
+    for(let i=0;i<4;i++){ const u=((T/9+i/4)%1), x=W*(.1+.06*i)+Math.sin(u*6+i*2)*W*.03+u*W*.1, y=hy-H*.03-u*H*.22; rx.globalAlpha=a*Math.sin(u*Math.PI)*.85; rx.fillText(i%2?'\u266B':'\u266A',x,y); }
+    rx.globalAlpha=a;
+    for(let k=0;k<6;k++){ const u=((T/7+k/6)%1), x=W*.6+Math.sin(u*5+k)*8+u*10, y=hy+H*.09-u*H*.09; rx.fillStyle=`rgba(255,255,255,${.12*(1-u)})`; rx.beginPath(); rx.arc(x,y,4+u*13,0,6.283); rx.fill(); }
     break; }
   case 'lighthouse': { // Schiff am Horizont und ziehender Nebel
     for(let i=0;i<3;i++){ const x=((T*.01+i*.4)%1.4-.2)*W; rx.fillStyle='rgba(255,255,255,.05)'; rx.beginPath(); rx.ellipse(x,hy-H*.01+i*H*.012,W*.35,H*.014,0,0,6.283); rx.fill(); }
