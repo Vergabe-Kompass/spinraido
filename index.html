@@ -151,11 +151,14 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .sleepmenu .go{display:block;width:100%;background:#ffc83d;color:#241433;font-weight:700}
 .sleepmenu .note{margin:10px 0 0;font-size:11px;opacity:.7;line-height:1.35}
 .sleepdark{position:fixed;inset:0;z-index:50;background:transparent;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(env(safe-area-inset-bottom) + 40px);color:#fff;font:400 12px var(--mono);letter-spacing:.14em;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.sleepdark .blind{position:absolute;left:0;right:0;top:0;height:0;background:repeating-linear-gradient(to bottom,#000 0 11px,#120d1a 11px 15px);box-shadow:0 8px 22px 4px rgba(0,0,0,.75);transition:height 8s cubic-bezier(.45,0,.55,1)}
+.sleepdark .blind{position:absolute;left:0;right:0;top:0;height:100%;background:repeating-linear-gradient(to bottom,#000 0 11px,#120d1a 11px 15px);box-shadow:0 8px 22px 4px rgba(0,0,0,.75);transform:translate3d(0,-101%,0);will-change:transform;backface-visibility:hidden;transition:transform 8s cubic-bezier(.45,0,.55,1)}
 .sleepdark .blind::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:#2a2036}
-.sleepdark.done .blind{box-shadow:none;background:#000}
+.sleepdark.sd-done{background:#000}
+.sleepdark.sd-done .blind{display:none}
+.sleepdark.sd-done span{transition:none}
+body.asleep .app,body.asleep #road{visibility:hidden}
 .sleepdark span{position:relative;opacity:0;transition:opacity 1.2s}
-.sleepdark.hint span{opacity:.35}
+.sleepdark.sd-hint span{opacity:.35}
 </style>
 </head>
 <body>
@@ -318,7 +321,7 @@ const SCN=[
  {sky:['#21405a','#5fb3a8','#f7d8a8'],sun:['#fff8e0','#f2a65a'],y:.15,scene:'mountains',ground:'lake',fx:'stars'},// Chillout: Berge am See
  {sky:['#ff5f9e','#ffb36a','#fff07a'],sun:['#ffffff','#ffd23f'],y:.8,scene:'beach',ground:'sea',fx:'sparkle'},    // Partyhits: Strandparty
  {sky:['#0b1740','#2c4f86','#f0b36e'],sun:['#fff6dc','#ffd08a'],y:.3,scene:'xmas',ground:'snow',fx:'snow'},      // Weihnachten: verschneites Dorf
- {sky:['#090d2b','#2b2a72','#d06aa6'],sun:['#fff4e0','#ffb27a'],y:.34,scene:'jazz',ground:'road',fx:'stars'}        // Jazz: Grossstadtnacht mit Neonschild
+ {sky:['#090d2b','#2b2a72','#d06aa6'],sun:['#fff4e0','#ffb27a'],y:.34,scene:'jazz',ground:'pave',fx:'stars'}        // Jazz: Grossstadtnacht mit Neonschild
 ];
 const SCN_OFF={sky:['#2b2350','#7a5c9e','#f2b8a2'],sun:['#ffe9d6','#ff8a7a'],y:.04,scene:'lighthouse',ground:'sea',fx:'stars'}; // Aus: Leuchtturm
 const N=ST.length+1;            // letzter Eintrag im Rad: Radio aus
@@ -885,6 +888,24 @@ function drawScene(name,hy,a){
     // Strassenlaterne
     { const lx=W*.46,lb=hy+H*.03,lh=H*.17; rx.fillStyle=rgb(col); rx.fillRect(lx-1.5,lb-lh,3,lh); rx.beginPath(); rx.moveTo(lx-6,lb-lh+1); rx.lineTo(lx+6,lb-lh+1); rx.lineTo(lx+3,lb-lh-6); rx.lineTo(lx-3,lb-lh-6); rx.fill();
       const g=rx.createRadialGradient(lx,lb-lh+3,1,lx,lb-lh+3,H*.12); g.addColorStop(0,'rgba(255,215,140,.55)'); g.addColorStop(1,'rgba(255,215,140,0)'); rx.fillStyle=g; rx.fillRect(lx-H*.12,lb-lh-H*.1,H*.24,H*.24); }
+    // Cafe im Vordergrund: Tisch mit drei Leuten, einer raucht
+    { const u=H*.016, tx=W*.3, base=hy+H*.13, ty=base-u*4.4;
+      // warmes Licht ueber dem Tisch
+      const lg=rx.createRadialGradient(tx,ty-u*2,1,tx,ty-u*2,u*11); lg.addColorStop(0,'rgba(255,205,120,.35)'); lg.addColorStop(1,'rgba(255,205,120,0)'); rx.fillStyle=lg; rx.fillRect(tx-u*11,ty-u*13,u*22,u*22);
+      rx.fillStyle=rgb(col);
+      const person=(px,facing,smoker)=>{ // sitzende Person (Vorderansicht)
+        rx.fillStyle=rgb(col); rx.fillRect(px-u*1.5,base-u*3.2,u*3,u*.5); rx.fillRect(px-u*1.3,base-u*2.7,u*.4,u*2.7); rx.fillRect(px+u*.9,base-u*2.7,u*.4,u*2.7); // Stuhl
+        rx.beginPath(); rx.roundRect(px-u*1.3,base-u*6.1,u*2.6,u*3.4,u*.9); rx.fill();                       // Oberkoerper
+        rx.beginPath(); rx.arc(px,base-u*7.1,u*1.1,0,6.283); rx.fill();                                       // Kopf
+        if(smoker){ rx.strokeStyle=rgb(col); rx.lineWidth=u*.7; rx.beginPath(); rx.moveTo(px+facing*u*1,base-u*5.4); rx.lineTo(px+facing*u*2,base-u*4.4); rx.lineTo(px+facing*u*.7,base-u*6.5); rx.stroke(); }
+      };
+      person(tx-u*4.6,1,false); person(tx+u*4.6,-1,true); person(tx,0,false);
+      // Tisch mit Tassen und Kerze
+      rx.fillStyle=rgb(col); rx.beginPath(); rx.ellipse(tx,ty,u*3.6,u*.7,0,0,6.283); rx.fill(); rx.fillRect(tx-u*.25,ty,u*.5,base-ty); rx.beginPath(); rx.ellipse(tx,base,u*1.5,u*.35,0,0,6.283); rx.fill();
+      rx.fillStyle='rgba(255,235,200,.9)'; rx.fillRect(tx-u*1.8,ty-u*.7,u*.8,u*.6); rx.fillRect(tx+u*1.2,ty-u*.7,u*.8,u*.6);
+      rx.fillStyle=`rgba(255,200,100,${.85+.15*Math.sin(T*9)})`; rx.beginPath(); rx.arc(tx,ty-u*.9,u*.4,0,6.283); rx.fill();
+      // glimmende Zigarette des rechten Gastes
+      rx.fillStyle=`rgba(255,110,50,${.7+.3*Math.sin(T*3)})`; rx.beginPath(); rx.arc(tx+u*4.6-u*.7,base-u*6.6,u*.28,0,6.283); rx.fill(); }
     break; }
   case 'lighthouse': {
     rx.beginPath(); rx.moveTo(W*.6,hy+2); rx.quadraticCurveTo(W*.78,hy-H*.05,W*1.02,hy-H*.04); rx.lineTo(W*1.02,hy+2); rx.fill();
@@ -917,6 +938,12 @@ function drawGround(type,hy,a){
     rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
     rx.fillStyle='rgba(255,255,255,.55)';
     for(let i=0;i<7;i++){ const p=(i+.5)/7, y=hy+(H-hy)*p*p+4; rx.beginPath(); rx.ellipse(W*((i*.37)%1),y,W*(.08+p*.18),2+p*5,0,0,6.283); rx.fill(); }
+  } else if(type==='pave'){
+    const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[2],[40,25,70],.75))); g.addColorStop(1,rgb(mix(now.sky[0],[5,5,20],.7)));
+    rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
+    // Spiegelungen von Neonschild, Laterne und Fenstern auf dem nassen Pflaster
+    [[.84,'255,90,190',.2],[.46,'255,215,140',.2],[.15,'255,200,110',.12]].forEach(([ux,c,al])=>{ const gg=rx.createLinearGradient(0,hy,0,H*.8); gg.addColorStop(0,`rgba(${c},${al*(.85+.15*Math.sin(T*1.3+ux*9))})`); gg.addColorStop(1,`rgba(${c},0)`); rx.fillStyle=gg; rx.fillRect(W*ux-W*.07,hy,W*.14,H*.8-hy); });
+    rx.strokeStyle='rgba(255,255,255,.05)'; rx.lineWidth=1; for(let i=0;i<8;i++){ const y=hy+(H-hy)*Math.pow((i+1)/8,1.7); rx.beginPath(); rx.moveTo(0,y); rx.lineTo(W,y); rx.stroke(); }
   } else if(type==='grid'){
     const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[1],NIGHT,.5))); g.addColorStop(1,rgb(NIGHT));
     rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
@@ -1068,11 +1095,10 @@ function drawExtra(name,hy,a){
       rx.save(); rx.translate(x,y); rx.rotate(T*3+i); rx.fillStyle=rgb(PAL[i%5],.9); rx.fillRect(-2.5,-1.2,5,2.4); rx.restore(); }
     rx.strokeStyle='rgba(255,255,255,.6)'; rx.lineWidth=2; rx.beginPath(); for(let x=0;x<=W;x+=10){ const y=hy+H*.04+Math.sin(x*.03+T*1.2)*3+Math.sin(T*.5)*H*.008; x?rx.lineTo(x,y):rx.moveTo(x,y); } rx.stroke();
     break; }
-  case 'jazz': { // Noten steigen aus dem Fenster, Dampf aus dem Gullydeckel
+  case 'jazz': { // Noten steigen aus dem Fenster, Rauch der Zigarette
+    { const u=H*.016, sx=W*.3+u*3.9, sy=hy+H*.13-u*6.7; for(let k=0;k<7;k++){ const t=((T/6+k/7)%1); rx.fillStyle=`rgba(230,230,245,${.22*(1-t)})`; rx.beginPath(); rx.arc(sx+Math.sin(t*7+k)*u*1.2+t*u*2,sy-t*u*9,u*(.35+t*1.3),0,6.283); rx.fill(); } }
     rx.fillStyle='rgba(255,225,170,1)'; rx.font=`${Math.max(14,W*.05)}px sans-serif`; rx.textAlign='center';
     for(let i=0;i<4;i++){ const u=((T/9+i/4)%1), x=W*(.1+.06*i)+Math.sin(u*6+i*2)*W*.03+u*W*.1, y=hy-H*.03-u*H*.22; rx.globalAlpha=a*Math.sin(u*Math.PI)*.85; rx.fillText(i%2?'\u266B':'\u266A',x,y); }
-    rx.globalAlpha=a;
-    for(let k=0;k<6;k++){ const u=((T/7+k/6)%1), x=W*.6+Math.sin(u*5+k)*8+u*10, y=hy+H*.09-u*H*.09; rx.fillStyle=`rgba(255,255,255,${.12*(1-u)})`; rx.beginPath(); rx.arc(x,y,4+u*13,0,6.283); rx.fill(); }
     break; }
   case 'lighthouse': { // Schiff am Horizont und ziehender Nebel
     for(let i=0;i<3;i++){ const x=((T*.01+i*.4)%1.4-.2)*W; rx.fillStyle='rgba(255,255,255,.05)'; rx.beginPath(); rx.ellipse(x,hy-H*.01+i*H*.012,W*.35,H*.014,0,0,6.283); rx.fill(); }
@@ -1172,15 +1198,15 @@ document.addEventListener('pointerdown',e=>{ if(!smenu.hidden&&!smenu.contains(e
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&!smenu.hidden) openSMenu(false); });
 let blindT=null;
 function goDark(){
-  openSMenu(false); sdarkov.hidden=false; sdarkov.classList.remove('hint','done');
-  const bl=$('#blind'), fin=()=>{ asleep=true; sdarkov.classList.add('done','hint'); document.getElementById('themec').content='#000000'; clearTimeout(hintT); hintT=setTimeout(()=>sdarkov.classList.remove('hint'),3500); };
+  openSMenu(false); sdarkov.hidden=false; sdarkov.classList.remove('sd-hint','sd-done'); document.body.classList.remove('asleep');
+  const bl=$('#blind'), fin=()=>{ asleep=true; document.body.classList.add('asleep'); sdarkov.classList.add('sd-done','sd-hint'); document.getElementById('themec').content='#000000'; clearTimeout(hintT); hintT=setTimeout(()=>sdarkov.classList.remove('sd-hint'),3500); };
   clearTimeout(blindT);
-  if(reduce){ bl.style.transition='none'; bl.style.height='100%'; fin(); return; }
-  bl.style.transition='none'; bl.style.height='0'; void bl.offsetHeight;
-  bl.style.transition=''; bl.style.height='100%';
-  blindT=setTimeout(fin,8000);
+  if(reduce){ bl.style.transition='none'; bl.style.transform='translate3d(0,0,0)'; fin(); return; }
+  bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; void bl.offsetHeight;
+  bl.style.transition=''; bl.style.transform='translate3d(0,0,0)';
+  blindT=setTimeout(fin,8100);
 }
-function wake(){ clearTimeout(blindT); clearTimeout(hintT); asleep=false; sdarkov.hidden=true; sdarkov.classList.remove('hint','done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.height='0'; document.getElementById('themec').content='#2b2350'; }
+function wake(){ clearTimeout(blindT); clearTimeout(hintT); asleep=false; document.body.classList.remove('asleep'); sdarkov.hidden=true; sdarkov.classList.remove('sd-hint','sd-done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; document.getElementById('themec').content='#2b2350'; }
 $('#sdark').addEventListener('click',goDark);
 sdarkov.addEventListener('click',wake);
 sdarkov.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') wake(); });
