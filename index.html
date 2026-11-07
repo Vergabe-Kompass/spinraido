@@ -149,6 +149,16 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .sleepmenu button{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:10px 6px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid transparent;-webkit-tap-highlight-color:transparent}
 .sleepmenu button[aria-pressed="true"]{border-color:#fff;background:rgba(255,255,255,.22)}
 .sleepmenu button:focus-visible{outline:2px solid #fff}
+.sleepmenu .var{margin:0 0 12px;padding:10px 10px 10px;border-radius:12px;background:rgba(255,255,255,.06)}
+.sleepmenu .var label{display:flex;justify-content:space-between;font:500 11px var(--mono);letter-spacing:.08em;opacity:.85;margin-bottom:8px}
+.sleepmenu .var b{font-weight:700;color:#ffc83d}
+.sleepmenu input[type=range]{all:unset;display:block;width:100%;height:28px;cursor:pointer;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.sleepmenu input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:rgba(255,255,255,.28)}
+.sleepmenu input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:#ffc83d;border:2px solid #241433}
+.sleepmenu input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:rgba(255,255,255,.28)}
+.sleepmenu input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#ffc83d;border:2px solid #241433}
+.sleepmenu input[type=range]:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:6px}
+.sleepmenu .vgo{display:block;width:100%;margin-top:4px;background:rgba(255,255,255,.2)}
 .sleepmenu .go{display:block;width:100%;background:#ffc83d;color:#241433;font-weight:700}
 .sleepmenu .note{margin:10px 0 0;font-size:11px;opacity:.7;line-height:1.35}
 .sleepdark{position:fixed;inset:0;z-index:50;background:transparent;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(env(safe-area-inset-bottom) + 40px);color:#fff;font:400 12px var(--mono);letter-spacing:.14em;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -191,6 +201,7 @@ body.asleep .app,body.asleep #road{visibility:hidden}
 <div class="sleepmenu" id="smenu" hidden role="dialog" aria-label="Sleep-Timer">
   <h2>Sleep-Timer</h2>
   <div class="opts" id="sopts"></div>
+  <div class="var"><label for="svar">Eigene Dauer <b id="svlab">20 min</b></label><input type="range" id="svar" min="5" max="180" step="5" value="20" aria-label="Eigene Dauer in Minuten"><button class="vgo" id="svgo">Timer starten</button></div>
   <button class="go" id="sdark">Bildschirm ausschalten</button>
   <p class="note">Das Radio spielt weiter. Zum Aufwecken auf den Bildschirm tippen. Mit Timer wird es zum Schluss langsam leiser und geht dann aus.</p>
 </div>
@@ -1289,13 +1300,18 @@ const smenu=$('#smenu'),moon=$('#moon'),moont=$('#moont'),sdarkov=$('#sdarkov'),
   const b=document.createElement('button'); b.textContent=l; b.dataset.m=m; b.setAttribute('aria-pressed',m===0?'true':'false');
   b.addEventListener('click',()=>{ setSleep(m); }); sopts.appendChild(b);
 });
+const svar=$('#svar'),svlab=$('#svlab'),svgo=$('#svgo');
+function fmtMin(m){ return m<60?m+' min':(Math.floor(m/60)+' h'+(m%60?' '+m%60+' min':'')); }
+svar.addEventListener('input',()=>{ svlab.textContent=fmtMin(+svar.value); });
+svgo.addEventListener('click',()=>{ setSleep(+svar.value); });
 function paintSleepBtns(){ sopts.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.m===sleepMin))); }
-function fmtLeft(ms){ const s=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(s/60); return m+':'+String(s%60).padStart(2,'0'); }
+function fmtLeft(ms){ const s=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(s/60),p=n=>String(n).padStart(2,'0'); return m>=60?Math.floor(m/60)+':'+p(m%60)+':'+p(s%60):m+':'+p(s%60); }
 function sleepLabel(){ moont.textContent=sleepEnd?fmtLeft(sleepEnd-Date.now()):'SLEEP'; }
 function resetVol(){ clearInterval(sleepFade); sleepFade=null; try{ player.volume=curTrim; }catch(e){} if(master&&ctx) master.gain.value=.55; }
 function setSleep(m){
   clearInterval(sleepTick); resetVol(); sleepMin=m; paintSleepBtns();
   if(!m){ sleepEnd=0; stopSleepWorker(); sleepLabel(); return; }
+  svar.value=m>=5&&m<=180?m:svar.value; svlab.textContent=fmtMin(+svar.value);
   sleepEnd=Date.now()+m*60000; sleepLabel();
   sleepTick=setInterval(sleepCheck,1000); startSleepWorker();
 }
