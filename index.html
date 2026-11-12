@@ -192,6 +192,10 @@ body.asleep .app,body.asleep #road{visibility:hidden}
 .sleepmenu button{min-height:42px}
 .toast{position:fixed;left:50%;top:max(64px,calc(env(safe-area-inset-top) + 54px));transform:translate(-50%,-6px);z-index:45;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;padding:9px 18px;border-radius:999px;background:rgba(28,18,58,.9);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 14px/1.2 var(--sans);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+
+#ov.spin #ptr,.overlay.spin #ptr{transition:transform .09s linear}
+@keyframes winp{0%,100%{filter:brightness(1)}35%{filter:brightness(1.7) drop-shadow(0 0 12px #fff)}}
+.seg.win>path{animation:winp .8s ease-out 1}
 </style>
 </head>
 <body>
@@ -216,7 +220,7 @@ body.asleep .app,body.asleep #road{visibility:hidden}
       <button class="dial" id="dial" aria-label="Radio an oder aus. Halten und ziehen: Sender wählen">
         <svg viewBox="-12 -12 24 24" aria-hidden="true"><path class="pw" d="M-6.3-6.3a9 9 0 1 0 12.6 0M0-10.5V-1.5"/></svg>
       </button>
-      <i class="wsp" aria-hidden="true"></i>
+      <button class="wbtn" id="dbtn" aria-label="Zufälliger Sender (Glücksrad)"><svg viewBox="-12 -12 24 24" aria-hidden="true"><rect x="-8" y="-8" width="16" height="16" rx="4"/><circle r=".9" cx="-4" cy="-4"/><circle r=".9" cx="4" cy="-4"/><circle r=".9" cx="0" cy="0"/><circle r=".9" cx="-4" cy="4"/><circle r=".9" cx="4" cy="4"/></svg></button>
     </div>
     <label class="vol" id="volrow" hidden><svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-9-3H-5L1-8V8L-5 3H-9Z"/><path d="M5-4Q8 0 5 4M8-7Q13 0 8 7"/></svg><input type="range" id="vol" min="0" max="100" step="2" value="100" aria-label="Lautstärke"></label>
     <p class="hint" id="hint">Tippen: Start/Stopp · Halten: Sender</p>
@@ -542,13 +546,13 @@ function fitText(el){
   let fs=parseFloat(getComputedStyle(el).fontSize),n=0;
   while(el.scrollWidth>el.clientWidth+1&&fs>10&&n++<40){ fs-=1; el.style.fontSize=fs+'px'; }
 }
-let wheelOpen=false,sel=OFF,tapMode=false,holdPid=null,tOpen=0;
+let wheelOpen=false,sel=OFF,tapMode=false,holdPid=null,tOpen=0,spinning=false,spinT=null;
 function hubFor(k){ const st=ST[k]; return st?{n:st.name,g:st.genre,f:st.freq.toFixed(1)+' FM',l:LIVE[k][0].n,c:st.color}:{n:'Radio aus',g:'Stille',f:'—',l:'',c:'#7a5c9e'}; }
 function paintWheel(){
   segs.forEach((g,k)=>{ g.classList.toggle('sel',k===sel); g.classList.toggle('cur',k===(cur<0?OFF:cur)&&cur>=0); });
   const h=hubFor(sel);
   $('#hg').textContent=h.g; $('#hn').textContent=h.n; $('#hf').textContent=h.f; $('#hl').textContent=h.l; wheel.style.setProperty('--sc',h.c);
-  { const tg=sel*STEP+ROT; if(pa===null){ ptr.style.transition='none'; pa=tg; ptr.style.transform=`rotate(${pa}deg)`; void ptr.getBoundingClientRect(); ptr.style.transition=''; } else { pa+=((tg-pa+540)%360)-180; ptr.style.transform=`rotate(${pa}deg)`; } }
+  { const tg=sel*STEP+ROT; if(pa===null){ ptr.style.transition='none'; pa=tg; ptr.style.transform=`rotate(${pa}deg)`; void ptr.getBoundingClientRect(); ptr.style.transition=''; } else { pa+=((((tg-pa+540)%360)+360)%360)-180; ptr.style.transform=`rotate(${pa}deg)`; } }
   fitText($('#hn'));
   hub.classList.remove('flip'); void hub.offsetWidth; hub.classList.add('flip');
 }
@@ -562,7 +566,7 @@ function openWheel(){
   ov.hidden=false; paintWheel(); void ov.offsetWidth; ov.classList.add('on');
 }
 function closeWheel(){
-  if(!wheelOpen) return; wheelOpen=false; tapMode=false; ov.classList.remove('on');
+  if(!wheelOpen) return; clearTimeout(spinT); spinning=false; ov.classList.remove('spin'); segs.forEach(g=>g.classList.remove('win')); wheelOpen=false; tapMode=false; ov.classList.remove('on');
   setTimeout(()=>{ if(!wheelOpen) ov.hidden=true; },240);
 }
 function confirmSel(){ try{ navigator.vibrate&&navigator.vibrate([14,30,14]); }catch(e){} const i=sel; closeWheel(); setStation(i<ST.length?i:-1); }
@@ -602,12 +606,31 @@ dial.addEventListener('pointercancel',()=>{ holdPid=null; clearTimeout(holdT); c
 dial.addEventListener('keydown',e=>{
   if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(wheelOpen) confirmSel(); else toggleRadio(); }
 });
+/* Gluecksrad: Zeiger dreht mehrere Runden, wird langsamer und bleibt zufaellig stehen */
+function spinWheel(){
+  if(spinning) return; ensureAudio();
+  const cand=[]; for(let i=0;i<ST.length;i++) if(i!==cur) cand.push(i);
+  const target=cand[Math.floor(Math.random()*cand.length)];
+  if(reduce){ setStation(target); return; }
+  if(!wheelOpen) openWheel(); tapMode=false; spinning=true; ov.classList.add('spin');
+  const start=sel, off=(target-start+N)%N, total=off+N*Math.ceil((Math.round(1.5*N)-off)/N), RAMP=12; let k=0;   // mindestens 1,5 Runden
+  const step=()=>{
+    if(!spinning||!wheelOpen) return;
+    if(k>=total){ spinning=false; const g=segs[sel]; g.classList.remove('win'); void g.getBoundingClientRect(); g.classList.add('win'); spinT=setTimeout(()=>{ g.classList.remove('win'); confirmSel(); },850); return; }
+    k++; const r=total-k; if(r<4) ov.classList.remove('spin'); select((sel+1)%N);
+    // gleichmaessig gut sichtbar (100 ms pro Kachel), die letzten 12 Kacheln werden deutlich langsamer
+    const p=r<RAMP?(RAMP-r)/RAMP:0;
+    spinT=setTimeout(step,100+420*p*p);
+  };
+  spinT=setTimeout(step,wheelOpen&&performance.now()-tOpen<400?420:60);
+}
+$('#dbtn').addEventListener('click',spinWheel);
 $('#wbtn').addEventListener('click',()=>{ ensureAudio(); openWheel(); tapMode=true; });
 ov.addEventListener('pointermove',e=>{
-  if(!wheelOpen||holdPid!==null) return; const i=idxFromPoint(e.clientX,e.clientY); if(i!==null) select(i);
+  if(!wheelOpen||holdPid!==null||spinning) return; const i=idxFromPoint(e.clientX,e.clientY); if(i!==null) select(i);
 });
 ov.addEventListener('click',e=>{
-  if(e.target.closest('#cancel')||performance.now()-tOpen<400) return;
+  if(e.target.closest('#cancel')||performance.now()-tOpen<400||spinning) return;
   const r=svg.getBoundingClientRect();
   const d=Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))/(r.width/2);
   if(d>1.15){ closeWheel(); return; }
@@ -1343,7 +1366,7 @@ function loop(ts){
   sceneT=reduce?1:Math.min(1,sceneT+dt*1.2);
   starA=lerp(starA,starG,k); sparkA=lerp(sparkA,sparkG,k); snowA=lerp(snowA,snowG,k);
   if(snowA>.01&&!reduce) flakes.forEach(f=>{ f.y+=f.v*dt; f.x+=Math.sin(T*.8+f.p)*dt*.012; if(f.y>1){ f.y=-.02; f.x=Math.random(); } });
-  if(!asleep){ drawLand(); drawEq(); } requestAnimationFrame(loop);
+  if(!asleep){ if(!spinning) drawLand(); drawEq(); } requestAnimationFrame(loop);
 }
 
 /* ---------- Sleep-Timer und Schlafmodus ---------- */
