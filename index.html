@@ -162,7 +162,7 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 .sleepmenu .go{display:block;width:100%;background:#ffc83d;color:#241433;font-weight:700}
 .sleepmenu .note{margin:10px 0 0;font-size:11px;opacity:.7;line-height:1.35}
 .sleepdark{position:fixed;inset:0;z-index:50;background:transparent;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(env(safe-area-inset-bottom) + 40px);color:#fff;font:400 12px var(--mono);letter-spacing:.14em;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.sleepdark .blind{position:absolute;left:0;right:0;top:0;height:100%;background:repeating-linear-gradient(to bottom,#000 0 11px,#120d1a 11px 15px);box-shadow:0 8px 22px 4px rgba(0,0,0,.75);transform:translate3d(0,-101%,0);will-change:transform;backface-visibility:hidden;transition:transform 8s cubic-bezier(.45,0,.55,1)}
+.sleepdark .blind{position:absolute;left:0;right:0;top:0;height:100%;background:repeating-linear-gradient(to bottom,#000 0 11px,#120d1a 11px 15px);box-shadow:0 8px 22px 4px rgba(0,0,0,.75);transform:translate3d(0,-101%,0);will-change:transform;backface-visibility:hidden;transition:transform 2s cubic-bezier(.45,0,.55,1)}
 .sleepdark .blind::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:#2a2036}
 .sleepdark.sd-done{background:#000}
 .sleepdark.sd-done .blind{display:none}
@@ -170,6 +170,28 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 body.asleep .app,body.asleep #road{visibility:hidden}
 .sleepdark span{position:relative;opacity:0;transition:opacity 1.2s}
 .sleepdark.sd-hint span{opacity:.35}
+
+/* Bedienung: Radiosymbol-Knopf, Lautstärke, Toast, grosse Trefferflaechen */
+.row{gap:18px}
+.wbtn{all:unset;box-sizing:border-box;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline);-webkit-tap-highlight-color:transparent}
+.wbtn svg{width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round}
+.wbtn:active{transform:scale(.92)}.wbtn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.wsp{width:48px;height:48px}
+.vol{display:flex;align-items:center;gap:10px;width:min(250px,72vw);padding:2px 14px;border-radius:999px;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline)}
+.vol[hidden]{display:none}
+.vol svg{width:22px;height:22px;flex:none;fill:var(--ink);stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;fill-opacity:.25}
+.vol input{all:unset;flex:1;height:40px;cursor:pointer;touch-action:pan-y}
+.vol input::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:rgba(255,255,255,.35)}
+.vol input::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8.5px;border-radius:50%;background:#fff;border:2px solid var(--st,#ff8fc2)}
+.vol input::-moz-range-track{height:5px;border-radius:3px;background:rgba(255,255,255,.35)}
+.vol input::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--st,#ff8fc2)}
+.vol input:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:6px}
+.hint.gone{display:none}
+.mk{top:-1px;height:40px;width:22px;margin-left:-11px}
+.moon{min-height:42px}
+.sleepmenu button{min-height:42px}
+.toast{position:fixed;left:50%;top:max(64px,calc(env(safe-area-inset-top) + 54px));transform:translate(-50%,-6px);z-index:45;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;padding:9px 18px;border-radius:999px;background:rgba(28,18,58,.9);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 14px/1.2 var(--sans);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
@@ -182,7 +204,7 @@ body.asleep .app,body.asleep #road{visibility:hidden}
     <div class="meta" id="meta">
       <p class="freq"><span id="freq">--.-</span> FM</p>
       <h1 id="sname">Radio aus</h1>
-      <p class="genre" id="sgenre">Knopf halten, Sender wählen</p>
+      <p class="genre" id="sgenre">Tippen zum Starten</p>
       <p class="live" id="lrow" hidden><b class="pill" id="lpill">Live</b><span id="lname"></span></p>
     </div>
     <canvas id="eq" aria-hidden="true"></canvas>
@@ -190,10 +212,15 @@ body.asleep .app,body.asleep #road{visibility:hidden}
   </section>
   <footer class="ctrl">
     <div class="row">
-      <button class="dial" id="dial" aria-label="Sender wählen: halten und zum Sender ziehen, oder tippen">
+      <button class="wbtn" id="wbtn" aria-label="Sender wählen"><svg viewBox="-12 -12 24 24" aria-hidden="true"><circle r="9"/><circle r="3.2"/><path d="M0-9V-3.2M0 3.2V9M-9 0H-3.2M3.2 0H9"/></svg></button>
+      <button class="dial" id="dial" aria-label="Radio an oder aus. Halten und ziehen: Sender wählen">
         <svg viewBox="-12 -12 24 24" aria-hidden="true"><path class="pw" d="M-6.3-6.3a9 9 0 1 0 12.6 0M0-10.5V-1.5"/></svg>
-      </button>    </div>
-    <p class="hint">Halten und zum Sender ziehen, oder tippen. Aus: unten im Rad.</p>
+      </button>
+      <i class="wsp" aria-hidden="true"></i>
+    </div>
+    <label class="vol" id="volrow" hidden><svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-9-3H-5L1-8V8L-5 3H-9Z"/><path d="M5-4Q8 0 5 4M8-7Q13 0 8 7"/></svg><input type="range" id="vol" min="0" max="100" step="2" value="100" aria-label="Lautstärke"></label>
+    <p class="hint" id="hint">Tippen: Start/Stopp · Halten: Sender</p>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <audio id="player" preload="none" playsinline referrerpolicy="no-referrer"></audio>
   </footer>
 </main>
@@ -202,7 +229,7 @@ body.asleep .app,body.asleep #road{visibility:hidden}
   <h2>Sleep-Timer</h2>
   <div class="opts" id="sopts"></div>
   <div class="var"><label for="svar">Eigene Dauer <b id="svlab">20 min</b></label><input type="range" id="svar" min="5" max="180" step="5" value="20" aria-label="Eigene Dauer in Minuten"><button class="vgo" id="svgo">Timer starten</button></div>
-  <button class="go" id="sdark">Bildschirm ausschalten</button>
+  <button class="go" id="sdark">Bildschirm abdunkeln</button>
   <p class="note">Das Radio spielt weiter. Zum Aufwecken auf den Bildschirm tippen. Mit Timer wird es zum Schluss langsam leiser und geht dann aus.</p>
 </div>
 <div class="sleepdark" id="sdarkov" hidden role="button" aria-label="Aufwecken"><div class="blind" id="blind"></div><span>TIPPEN ZUM AUFWECKEN</span></div>
@@ -361,7 +388,7 @@ function ensureAudio(){
   try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){}
   if(ctx){ if(ctx.state==='suspended') ctx.resume(); return; }
   try{ ctx=new AC(); }catch(e){ ctx=null; return; }
-  master=ctx.createGain(); master.gain.value=.55;
+  master=ctx.createGain(); master.gain.value=.55*(typeof userVol==='number'?userVol:1);
   const comp=ctx.createDynamicsCompressor(); comp.threshold.value=-16; comp.ratio.value=5;
   analyser=ctx.createAnalyser(); analyser.fftSize=256; analyser.smoothingTimeConstant=.78;
   master.connect(comp); comp.connect(analyser); analyser.connect(ctx.destination);
@@ -546,27 +573,36 @@ function idxFromPoint(x,y){
   return Math.round(a/STEP)%N;
 }
 
-/* Knopf: halten und ziehen, oder kurz tippen */
-const dial=$('#dial'); let t0=0,moved=false;
+/* Knopf: Tippen = Radio an/aus (zuletzt gehoerter Sender), Halten und ziehen = Senderrad */
+const dial=$('#dial'); let t0=0,moved=false,holdT=null,sx0=0,sy0=0;
+function lastSt(){ try{ const v=parseInt(localStorage.getItem('spinradio.last'),10); return v>=0&&v<ST.length?v:-1; }catch(e){ return -1; } }
+function toggleRadio(){
+  ensureAudio(); try{ navigator.vibrate&&navigator.vibrate(12); }catch(e){}
+  if(cur>=0){ setStation(-1); return; }
+  const l=lastSt(); if(l>=0) setStation(l); else { openWheel(); tapMode=true; }
+}
 dial.addEventListener('contextmenu',e=>e.preventDefault());
 dial.addEventListener('pointerdown',e=>{
-  e.preventDefault(); ensureAudio(); holdPid=e.pointerId; t0=performance.now(); moved=false;
+  e.preventDefault(); ensureAudio(); holdPid=e.pointerId; t0=performance.now(); moved=false; sx0=e.clientX; sy0=e.clientY;
   try{ dial.setPointerCapture(e.pointerId); }catch(err){}
-  openWheel();
+  clearTimeout(holdT); holdT=setTimeout(()=>{ if(holdPid!==null) openWheel(); },240);
 });
 dial.addEventListener('pointermove',e=>{
   if(holdPid!==e.pointerId) return;
+  if(!wheelOpen){ if(Math.hypot(e.clientX-sx0,e.clientY-sy0)>10){ clearTimeout(holdT); openWheel(); } else return; }
   const i=idxFromPoint(e.clientX,e.clientY); if(i!==null){ moved=true; select(i); }
 });
 dial.addEventListener('pointerup',e=>{
-  if(holdPid!==e.pointerId) return; holdPid=null;
+  if(holdPid!==e.pointerId) return; holdPid=null; clearTimeout(holdT);
   ensureAudio(); // iPhone gibt Ton erst beim Loslassen frei
-  if(!moved&&performance.now()-t0<300){ tapMode=true; } else confirmSel();
+  if(!wheelOpen){ toggleRadio(); return; }
+  if(moved) confirmSel(); else tapMode=true;
 });
-dial.addEventListener('pointercancel',()=>{ holdPid=null; closeWheel(); });
+dial.addEventListener('pointercancel',()=>{ holdPid=null; clearTimeout(holdT); closeWheel(); });
 dial.addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(wheelOpen) confirmSel(); else { ensureAudio(); openWheel(); tapMode=true; } }
+  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(wheelOpen) confirmSel(); else toggleRadio(); }
 });
+$('#wbtn').addEventListener('click',()=>{ ensureAudio(); openWheel(); tapMode=true; });
 ov.addEventListener('pointermove',e=>{
   if(!wheelOpen||holdPid!==null) return; const i=idxFromPoint(e.clientX,e.clientY); if(i!==null) select(i);
 });
@@ -607,7 +643,7 @@ function paintDeck(){
   root.style.setProperty('--st',st?st.color:'#7a5c9e');
   { const c=hexRgb(st?st.color:'#7a5c9e'), L=(.299*c[0]+.587*c[1]+.114*c[2])/255; root.style.setProperty('--chip',L>.62?'#241433':'#fff'); }
   $('#sname').textContent=st?st.name:'Radio aus'; fitText($('#sname'));
-  $('#sgenre').textContent=st?st.genre:'Knopf halten, Sender wählen';
+  $('#sgenre').textContent=st?st.genre:'Tippen zum Starten';
   $('#freq').textContent=st?st.freq.toFixed(1):'--.-';
   badge.innerHTML=`<svg viewBox="-30 -30 60 60">${st?`<rect x="-27" y="-27" width="54" height="54" rx="15" fill="${st.color}"/><g class="gl" transform="scale(.185) translate(-128,-128)">${GLY[st.genre]||''}</g>`:OFFLOGO}</svg>`;
   needle.classList.toggle('off',!st); if(st) needle.style.left=pc(st.freq);
@@ -648,7 +684,15 @@ const TRIM={
 };
 let curTrim=1;
 function trimFor(u){ return TRIM[u]!==undefined?TRIM[u]:1; }
-function setTrim(u){ curTrim=trimFor(u); try{ player.volume=curTrim; }catch(e){} }
+let userVol=1; try{ const v=parseFloat(localStorage.getItem('spinradio.vol')); if(v>=0&&v<=1) userVol=v; }catch(e){}
+function applyVol(v=1){ try{ player.volume=Math.min(1,curTrim*userVol*v); }catch(e){} if(master&&ctx) master.gain.value=.55*userVol*v; }
+function setTrim(u){ curTrim=trimFor(u); applyVol(); }
+const toastEl=$('#toast'); let toastT=null;
+function toast(t){ toastEl.textContent=t; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'),1500); }
+// Lautstaerkeregler nur dort, wo der Browser die Lautstaerke eines Streams zulaesst (nicht auf dem iPhone)
+(function(){ let ok=false; try{ const o=player.volume; player.volume=.5; ok=Math.abs(player.volume-.5)<.01; player.volume=o; }catch(e){}
+  if(!ok) return; const row=$('#volrow'), sl=$('#vol'); row.hidden=false; sl.value=Math.round(userVol*100);
+  sl.addEventListener('input',()=>{ userVol=sl.value/100; applyVol(); try{ localStorage.setItem('spinradio.vol',String(userVol)); }catch(e){} }); })();
 function tryUrl(){
   const list=LIVE[liveIdx];
   if(!list||urlIdx>=list.length){ fallback(); return; }
@@ -695,6 +739,8 @@ try{
 function setStation(i){
   if(i===cur&&(i<0||mode==='live'||mode==='load'||playing)) return;
   cur=i; paintDeck(); paintWheel();
+  if(i>=0){ try{ localStorage.setItem('spinradio.last',String(i)); }catch(e){} }
+  toast(i<0?'Radio aus':ST[i].name+' · '+ST[i].freq.toFixed(1)+' FM');
   if(i<0){ stopPlay(); stopLive(); setMode('off',''); return; }
   ensureAudio(); if(ctx) tuneBurst();
   startLive(i);
@@ -1282,7 +1328,12 @@ function drawEq(){
   }
   ex.globalAlpha=1;
 }
+let running=true, lastDraw=0;
+function kick(){ if(running) return; running=true; last=performance.now(); requestAnimationFrame(loop); }
 function loop(ts){
+  if(asleep){ running=false; return; }            // abgedunkelt: keine Animation, nur Audio und Timer
+  if(ts-lastDraw<30){ requestAnimationFrame(loop); return; }   // ca. 30 Bilder pro Sekunde reichen und sparen Akku
+  lastDraw=ts;
   const dt=Math.min(.05,(ts-last)/1000||.016); last=ts;
   if(!reduce){ T+=dt; phase=(phase+dt*(wheelOpen?.08:cur<0?.25:.6))%1; }
   const k=reduce?1:Math.min(1,dt*2.2);
@@ -1309,7 +1360,7 @@ svgo.addEventListener('click',()=>{ setSleep(+svar.value); });
 function paintSleepBtns(){ sopts.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.m===sleepMin))); }
 function fmtLeft(ms){ const s=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(s/60),p=n=>String(n).padStart(2,'0'); return m>=60?Math.floor(m/60)+':'+p(m%60)+':'+p(s%60):m+':'+p(s%60); }
 function sleepLabel(){ moont.textContent=sleepEnd?fmtLeft(sleepEnd-Date.now()):'SLEEP'; }
-function resetVol(){ clearInterval(sleepFade); sleepFade=null; try{ player.volume=curTrim; }catch(e){} if(master&&ctx) master.gain.value=.55; }
+function resetVol(){ clearInterval(sleepFade); sleepFade=null; applyVol(); }
 function setSleep(m){
   clearInterval(sleepTick); resetVol(); sleepMin=m; paintSleepBtns();
   if(!m){ sleepEnd=0; stopSleepWorker(); sleepLabel(); return; }
@@ -1344,8 +1395,7 @@ function fadeOutEnd(){
   clearInterval(sleepFade);
   sleepFade=setInterval(()=>{
     k++; const v=Math.max(0,1-k/N);
-    try{ player.volume=curTrim*v; }catch(e){}
-    if(master&&ctx) master.gain.value=.55*v;
+    applyVol(v);
     if(k>=N){ resetVol(); setStation(-1); sleepLabel(); }
   },500);
 }
@@ -1361,13 +1411,14 @@ function goDark(){
   if(reduce){ bl.style.transition='none'; bl.style.transform='translate3d(0,0,0)'; fin(); return; }
   bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; void bl.offsetHeight;
   bl.style.transition=''; bl.style.transform='translate3d(0,0,0)';
-  blindT=setTimeout(fin,8100);
+  blindT=setTimeout(fin,2100);
 }
-function wake(){ clearTimeout(blindT); clearTimeout(hintT); asleep=false; document.body.classList.remove('asleep'); sdarkov.hidden=true; sdarkov.classList.remove('sd-hint','sd-done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; document.getElementById('themec').content='#2b2350'; }
+function wake(){ kick(); clearTimeout(blindT); clearTimeout(hintT); asleep=false; document.body.classList.remove('asleep'); sdarkov.hidden=true; sdarkov.classList.remove('sd-hint','sd-done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; document.getElementById('themec').content='#2b2350'; }
 $('#sdark').addEventListener('click',goDark);
 sdarkov.addEventListener('click',wake);
 sdarkov.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') wake(); });
 
+try{ const n=parseInt(localStorage.getItem('spinradio.hints'),10)||0; if(n>=6) $('#hint').classList.add('gone'); else localStorage.setItem('spinradio.hints',String(n+1)); }catch(e){}
 fit(); paintDeck(); paintWheel(); requestAnimationFrame(loop);
 const refit=()=>{ fitText($('#sname')); if(wheelOpen) fitText($('#hn')); };
 try{ document.fonts.ready.then(refit); }catch(e){}
