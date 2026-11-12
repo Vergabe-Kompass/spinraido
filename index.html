@@ -177,15 +177,20 @@ body.asleep .app,body.asleep #road{visibility:hidden}
 .wbtn svg{width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round}
 .wbtn:active{transform:scale(.92)}.wbtn:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .wsp{width:48px;height:48px}
-.vol{display:flex;align-items:center;gap:10px;width:min(250px,72vw);padding:2px 14px;border-radius:999px;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline)}
-.vol[hidden]{display:none}
-.vol svg{width:22px;height:22px;flex:none;fill:var(--ink);stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;fill-opacity:.25}
-.vol input{all:unset;flex:1;height:40px;cursor:pointer;touch-action:pan-y}
-.vol input::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:rgba(255,255,255,.35)}
-.vol input::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8.5px;border-radius:50%;background:#fff;border:2px solid var(--st,#ff8fc2)}
-.vol input::-moz-range-track{height:5px;border-radius:3px;background:rgba(255,255,255,.35)}
-.vol input::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--st,#ff8fc2)}
-.vol input:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:6px}
+.right{gap:8px}.right #clock{box-sizing:border-box;display:inline-flex;align-items:center;min-height:42px;padding:6px 11px;border-radius:999px;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline);font:500 11px var(--mono);letter-spacing:.12em;text-shadow:none}.vbtn{all:unset;box-sizing:border-box;width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gline);-webkit-tap-highlight-color:transparent}
+.vbtn[hidden]{display:none}
+.vbtn svg,.vm svg{width:20px;height:20px;fill:#fff;fill-opacity:.25;stroke:#fff;stroke-width:1.5;stroke-linecap:round}
+.vbtn:focus-visible,.vm:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.vbtn .mx,.vm .mx{display:none}.muted .mx{display:inline}.muted .w1,.muted .w2{display:none}.low .w2{display:none}
+.volpop{position:fixed;z-index:30;right:16px;top:calc(env(safe-area-inset-top) + 66px);display:flex;align-items:center;gap:8px;width:min(280px,calc(100vw - 32px));padding:4px 14px 4px 6px;border-radius:999px;background:rgba(36,20,51,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--gline);color:#fff}
+.volpop[hidden]{display:none}
+.vm{all:unset;box-sizing:border-box;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent}
+.volpop input{all:unset;flex:1;height:44px;cursor:pointer;touch-action:pan-y}
+.volpop input::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:rgba(255,255,255,.28)}
+.volpop input::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:#fff;border:2px solid var(--st,#ff8fc2)}
+.volpop input::-moz-range-track{height:6px;border-radius:3px;background:rgba(255,255,255,.28)}
+.volpop input::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--st,#ff8fc2)}
+.volpop output{font:500 11px var(--mono);letter-spacing:.06em;min-width:26px;text-align:right;opacity:.85}
 .hint.gone{display:none}
 .mk{top:-1px;height:40px;width:22px;margin-left:-11px}
 .moon{min-height:42px}
@@ -201,7 +206,8 @@ body.asleep .app,body.asleep #road{visibility:hidden}
 <body>
 <canvas id="road" aria-hidden="true"></canvas>
 <main class="app">
-  <header class="top"><span class="brand">SPINRADIO</span><span class="right"><button class="moon" id="moon" aria-haspopup="true" aria-expanded="false" aria-label="Sleep-Timer und Schlafmodus"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg><span id="moont">SLEEP</span></button><span id="clock">--:--</span></span></header>
+  <div class="volpop" id="volpop" hidden><button class="vm" id="vmute" aria-label="Stumm schalten"><svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-9-3H-5L1-8V8L-5 3H-9Z"/><path class="w1" d="M5-4Q8 0 5 4"/><path class="w2" d="M8-7Q13 0 8 7"/><path class="mx" d="M5-4L11 4M11-4L5 4"/></svg></button><input type="range" id="vol" min="0" max="100" step="2" value="100" aria-label="Lautstärke"><output id="volv">100</output></div>
+  <header class="top"><span class="brand">SPINRADIO</span><span class="right"><button class="vbtn" id="vbtn" hidden aria-haspopup="true" aria-expanded="false" aria-label="Lautstärke"><svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-9-3H-5L1-8V8L-5 3H-9Z"/><path class="w1" d="M5-4Q8 0 5 4"/><path class="w2" d="M8-7Q13 0 8 7"/><path class="mx" d="M5-4L11 4M11-4L5 4"/></svg></button><button class="moon" id="moon" aria-haspopup="true" aria-expanded="false" aria-label="Sleep-Timer und Schlafmodus"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg><span id="moont">SLEEP</span></button><span id="clock">--:--</span></span></header>
   <div></div>
   <section class="deck" aria-live="polite">
     <div class="badge" id="badge"></div>
@@ -222,7 +228,6 @@ body.asleep .app,body.asleep #road{visibility:hidden}
       </button>
       <button class="wbtn" id="dbtn" aria-label="Zufälliger Sender (Glücksrad)"><svg viewBox="-12 -12 24 24" aria-hidden="true"><rect x="-8" y="-8" width="16" height="16" rx="4"/><circle r=".9" cx="-4" cy="-4"/><circle r=".9" cx="4" cy="-4"/><circle r=".9" cx="0" cy="0"/><circle r=".9" cx="-4" cy="4"/><circle r=".9" cx="4" cy="4"/></svg></button>
     </div>
-    <label class="vol" id="volrow" hidden><svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-9-3H-5L1-8V8L-5 3H-9Z"/><path d="M5-4Q8 0 5 4M8-7Q13 0 8 7"/></svg><input type="range" id="vol" min="0" max="100" step="2" value="100" aria-label="Lautstärke"></label>
     <p class="hint" id="hint">Tippen: Start/Stopp · Halten: Sender</p>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <audio id="player" preload="none" playsinline referrerpolicy="no-referrer"></audio>
@@ -714,8 +719,17 @@ const toastEl=$('#toast'); let toastT=null;
 function toast(t){ toastEl.textContent=t; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'),1500); }
 // Lautstaerkeregler nur dort, wo der Browser die Lautstaerke eines Streams zulaesst (nicht auf dem iPhone)
 (function(){ let ok=false; try{ const o=player.volume; player.volume=.5; ok=Math.abs(player.volume-.5)<.01; player.volume=o; }catch(e){}
-  if(!ok) return; const row=$('#volrow'), sl=$('#vol'); row.hidden=false; sl.value=Math.round(userVol*100);
-  sl.addEventListener('input',()=>{ userVol=sl.value/100; applyVol(); try{ localStorage.setItem('spinradio.vol',String(userVol)); }catch(e){} }); })();
+  if(!ok) return; const vb=$('#vbtn'), pop=$('#volpop'), sl=$('#vol'), out=$('#volv'), mu=$('#vmute'); vb.hidden=false; sl.value=Math.round(userVol*100);
+  let prev=userVol>0?userVol:1, ct=null;
+  function paint(){ const m=userVol<=0; [vb,mu].forEach(e=>{ e.classList.toggle('muted',m); e.classList.toggle('low',!m&&userVol<.5); }); out.textContent=Math.round(userVol*100); sl.value=Math.round(userVol*100); mu.setAttribute('aria-label',m?'Ton an':'Stumm schalten'); }
+  function save(){ applyVol(); paint(); try{ localStorage.setItem('spinradio.vol',String(userVol)); }catch(e){} }
+  function close(){ pop.hidden=true; vb.setAttribute('aria-expanded','false'); clearTimeout(ct); }
+  function keep(){ clearTimeout(ct); ct=setTimeout(close,3500); }
+  vb.addEventListener('click',e=>{ e.stopPropagation(); if(pop.hidden){ pop.hidden=false; vb.setAttribute('aria-expanded','true'); keep(); } else close(); });
+  sl.addEventListener('input',()=>{ userVol=sl.value/100; if(userVol>0) prev=userVol; save(); keep(); });
+  mu.addEventListener('click',()=>{ if(userVol>0){ prev=userVol; userVol=0; } else userVol=prev; save(); keep(); });
+  document.addEventListener('pointerdown',e=>{ if(!pop.hidden&&!pop.contains(e.target)&&!vb.contains(e.target)) close(); });
+  paint(); })();
 function tryUrl(){
   const list=LIVE[liveIdx];
   if(!list||urlIdx>=list.length){ fallback(); return; }
