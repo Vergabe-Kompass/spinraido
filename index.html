@@ -311,7 +311,7 @@ const LIVE=[
  [{n:'Backroad Country Radio',u:'https://stream.backroadcountryradio.com/listen/backroad/radio.mp3'}],
  [{n:'MDR Sputnik Club',u:'https://mdr-284331-2.sslcast.mdr.de/mdr/284331/2/mp3/high/stream.mp3'},{n:'FIP Electro',u:'https://icecast.radiofrance.fr/fipelectro-midfi.mp3'},{n:'Nightride FM Spacesynth',u:'https://stream.nightride.fm/spacesynth.mp3'}],
  [{n:'Inselradio Mallorca',u:'https://addrad.io/445fxk9'},{n:'Inselradio Mallorca',u:'https://inselradiomallorca.stream29.radiohost.de/inselradiomallorca-live_mp3-128'}],
- [{n:'FIP Reggae',u:'https://icecast.radiofrance.fr/fipreggae-midfi.mp3'}],
+ [{n:'Mountain Reggae Radio',u:'https://mountainreggaeradio.stream.laut.fm/mountainreggaeradio'},{n:'La Grosse Radio Reggae',u:'https://hd.lagrosseradio.info/lagrosseradio-reggae-192.mp3'},{n:'Reggae.fr',u:'https://listen.radioking.com/radio/50473/stream/87415'},{n:'FIP Reggae',u:'https://icecast.radiofrance.fr/fipreggae-midfi.mp3'}],
  [{n:'Funky Corner Radio',u:'https://ais-sa2.cdnstream1.com/2447_192.mp3'},{n:'FIP Groove',u:'https://icecast.radiofrance.fr/fipgroove-midfi.mp3'}],
  [{n:'ByteFM',u:'https://bytefm.cast.addradio.de/bytefm/main/high/stream'},{n:'1LIVE Plan B',u:'https://wdr-1live-planb.icecastssl.wdr.de/wdr/1live/planb/mp3/128/stream.mp3'},{n:'KEXP',u:'https://kexp.streamguys1.com/kexp160.aac'}],
  [{n:'90s90s Hits',u:'https://streams.90s90s.de/pop/mp3-192/streams.90s90s.de/'},{n:'Sunshine Live 90er',u:'https://stream.sunshine-live.de/90er/mp3-192/stream.sunshine-live.de'},{n:'Flux FM 90er',u:'https://channels.fluxfm.de/90s/stream.mp3'},{n:'Disco Funk Modern Soul Boogie',u:'https://discofunk.streamingmedia.it/usa'},{n:'FIP Groove',u:'https://icecast.radiofrance.fr/fipgroove-midfi.mp3'}],
@@ -319,7 +319,7 @@ const LIVE=[
  [{n:'Ballermann Radio',u:'https://bmr.streamabc.net/bmr-bmrdasoriginal-mp3-192-2938432'},
   {n:'Ballermann Radio',u:'https://stream.bmr-radio.de/ballermann-radio.mp3'},
   {n:'Ballermann Radio Top 30',u:'https://audio.bmr-radio.de/top30/mp3-192/Webplayer'}],
- [{n:'Christmas Vinyl HD',u:'https://icecast.walmradio.com:8443/christmas'},{n:'Christmas FM Non-stop',u:'https://xmas-node1.zip.wf/live.aac'},{n:'Christmas FM Classics',u:'https://christmasfm.cdnstream1.com/2550_128.mp3'}],
+ [{n:'Radio Regenbogen Christmas Hits',u:'https://stream.regenbogen.de/christmas/mp3-128/radiobrowser'},{n:'Smooth Christmas',u:'https://media-ice.musicradio.com/SmoothXmasMP3'},{n:'Radio Reeperbahn Weihnachten',u:'https://s35.derstream.net/reeperbahn-ch3.mp3'},{n:'Hit Radio N1 Weihnachtsradio',u:'https://frontend.streamonkey.net/fhn-hitradion1weihnachten/stream/mp3'},{n:'Radio Dresden Weihnachtsradio',u:'https://web.radio.radiodresden.de/radiodresden-weihnachten/stream/mp3'}],
  [{n:'Radio Swiss Jazz',u:'https://stream.srg-ssr.ch/m/rsj/mp3_128'},{n:'FIP Jazz',u:'https://icecast.radiofrance.fr/fipjazz-midfi.mp3'},{n:'NDR Blue',u:'https://icecast.ndr.de/ndr/ndrblue/live/mp3/128/stream.mp3'}],
  [{n:'Bremen Vier',u:'https://icecast.radiobremen.de/rb/bremenvier/live/mp3/128/stream.mp3'},{n:'Bremen NEXT',u:'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3'}]
 ];
@@ -627,6 +627,8 @@ function setMode(m,name){
 function armTimer(ms){ clearTimeout(liveTimer); liveTimer=setTimeout(()=>{ if(mode==='load') nextUrl(); },ms); }
 /* Lautstaerke-Ausgleich: Faktor pro Stream (gemessen, Ziel ca. -18 LUFS).  Hip-Hop-Sender und 1LIVE Plan B: Schaetzwert. */
 const TRIM={
+ 'https://stream.regenbogen.de/christmas/mp3-128/radiobrowser':.34,'https://media-ice.musicradio.com/SmoothXmasMP3':.52,'https://s35.derstream.net/reeperbahn-ch3.mp3':.38,'https://frontend.streamonkey.net/fhn-hitradion1weihnachten/stream/mp3':1,'https://web.radio.radiodresden.de/radiodresden-weihnachten/stream/mp3':.4,
+ 'https://mountainreggaeradio.stream.laut.fm/mountainreggaeradio':.47,'https://hd.lagrosseradio.info/lagrosseradio-reggae-192.mp3':.33,'https://listen.radioking.com/radio/50473/stream/87415':.47,
  'https://streams.radiobob.de/bob-live/mp3-192/mediaplayer/':.41,'https://mdr-284331-1.sslcast.mdr.de/mdr/284331/1/mp3/high/stream.mp3':.86,'https://stream.radioparadise.com/rock-128':.33,'https://stream.radioparadise.com/mp3-128':.45,
  'https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3':.6,'https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3':.9,
  'https://icecast.radiobremen.de/rb/bremennext/live/mp3/128/stream.mp3':1,'https://liveradio.swr.de/d9zadj3/dasding/':.72,
