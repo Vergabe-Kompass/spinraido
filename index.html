@@ -11,9 +11,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<meta name="theme-color" content="#2b2350" id="themec">
+<meta name="theme-color" content="#1c1550" id="themec">
 <title>Spinradio</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;600&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Monoton&family=Unbounded:wght@600;800&family=Figtree:wght@400;600&family=DM+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: Sunset Drive. Himmel, Sonne und Kulisse füllen den Hintergrund und wechseln pro Sender; Anzeige und Rad als Milchglas darüber. Bewusst ein heller Look in beiden Systemthemen. */
 :root{
@@ -170,6 +170,46 @@ h1{margin:2px 0 4px;font:800 clamp(18px,5.6vw,26px)/1 var(--disp);letter-spacing
 body.asleep .app,body.asleep #road{visibility:hidden}
 .sleepdark span{position:relative;opacity:0;transition:opacity 1.2s}
 .sleepdark.sd-hint span{opacity:.35}
+
+/* ===== Miami-Sunset-Look (Palette nach den Rockstar-Farbideen): Kobaltblau, Bonbon-Pink, Violett, Pfirsich; Sticker-Schrift mit dunkler Kontur ===== */
+:root{
+  --ink:#fff6fb;--ink2:rgba(255,230,242,.74);
+  --glass:rgba(24,22,78,.6);--glass2:rgba(34,24,92,.8);--gline:rgba(255,143,194,.85);
+  --neon:#ff8fc2;--cyan:#ffbb8e;--sky:#1c1550;--outl:#1e1413;
+  color-scheme:dark;
+}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 45%,transparent 60%,rgba(14,8,50,.5) 100%)}
+.stk{background:linear-gradient(180deg,#7a78ff 0%,#c777d8 42%,#ff8fc2 62%,#ffbb8e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(2px 0 0 var(--outl)) drop-shadow(-2px 0 0 var(--outl)) drop-shadow(0 2px 0 var(--outl)) drop-shadow(0 -2px 0 var(--outl))}
+.brand{font:800 17px var(--disp);letter-spacing:.1em;background:linear-gradient(180deg,#8a86ff 0%,#d27ede 45%,#ff8fc2 70%,#ffbb8e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(1.5px 0 0 var(--outl)) drop-shadow(-1.5px 0 0 var(--outl)) drop-shadow(0 1.5px 0 var(--outl)) drop-shadow(0 -1.5px 0 var(--outl))}
+.top{text-shadow:0 1px 8px rgba(20,10,70,.7)}
+#clock{color:var(--cyan)}
+.deck{border:1.5px solid var(--gline);box-shadow:0 0 0 3px rgba(30,20,19,.55),0 0 24px -4px rgba(255,143,194,.45),inset 0 0 30px rgba(120,120,255,.12),0 20px 50px -20px rgba(8,4,40,.8)}
+h1{background:linear-gradient(180deg,#8f8cff 0%,#d27ede 44%,#ff8fc2 68%,#ffbb8e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(1.5px 0 0 var(--outl)) drop-shadow(-1.5px 0 0 var(--outl)) drop-shadow(0 1.5px 0 var(--outl)) drop-shadow(0 -1.5px 0 var(--outl))}
+.freq{color:var(--cyan)}
+.genre{box-shadow:0 0 0 1.5px var(--outl)}
+.pill.alt{border-color:#ffbb8e;color:#ffbb8e}
+.pill.on{box-shadow:0 0 0 1.5px var(--outl)}
+.badge{filter:drop-shadow(0 0 0 var(--outl)) drop-shadow(0 6px 10px rgba(8,4,40,.5))}
+.strip{border-top-color:rgba(255,230,242,.3)}
+.tick{background:#ffe6f2}
+.mk::before{box-shadow:0 0 0 1.5px #fff,0 0 0 3px var(--outl)}
+.needle{background:#ffbb8e;box-shadow:0 0 0 1.5px var(--outl)}
+.dial{border:2.5px solid var(--neon);box-shadow:0 0 0 4px var(--outl),0 0 0 8px color-mix(in srgb,var(--st) 60%,transparent),0 14px 30px -12px rgba(8,4,40,.8)}
+.dial .pw{stroke:#fff}
+.hint{border:1px solid rgba(255,143,194,.55)}
+.overlay{background:radial-gradient(circle at 50% 50%,rgba(255,143,194,.22),rgba(18,12,66,.8))}
+.seg>path{fill:color-mix(in srgb,var(--c) 26%,rgba(28,26,92,.92));stroke:var(--c);stroke-width:2.5;filter:none}
+.seg .gl{fill:color-mix(in srgb,var(--c) 30%,#fff)}
+.seg .dot{stroke:var(--outl);stroke-width:2}
+.seg.sel>path{fill:var(--c);stroke:#fff;stroke-width:3.5;filter:drop-shadow(0 0 0 var(--outl)) drop-shadow(0 8px 14px rgba(8,4,40,.7))}
+.seg.sel .gl{fill:var(--outl)}
+#ptr{stroke:var(--outl);stroke-width:3;paint-order:stroke;filter:drop-shadow(0 3px 6px rgba(8,4,40,.6))}
+.hubdisc{fill:rgba(26,22,82,.95);stroke:var(--sc);stroke-width:4}
+.hub-g{color:color-mix(in srgb,var(--sc) 55%,#fff)}
+.hub-n{color:#fff}
+.cancel{color:#fff;background:var(--glass2);border:2px solid var(--neon);box-shadow:0 0 0 3px var(--outl)}
+.sleepmenu{border-color:var(--neon)}
+.moon{border-color:var(--gline)}
 </style>
 </head>
 <body>
@@ -1052,7 +1092,7 @@ function drawGround(type,hy,a){
       rx.fillStyle=rgb(mix(now.sun[0],now.sun[1],k/26),.55-k*.015); rx.fillRect(sx-w/2+Math.sin(T+k)*(type==='lake'?2:6),yy,w,ww);
     }
   } else if(type==='cobble'){
-    const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[2],[196,184,176],.55))); g.addColorStop(1,rgb(mix(now.sky[0],[84,74,96],.6)));
+    const g=rx.createLinearGradient(0,hy,0,H); g.addColorStop(0,rgb(mix(now.sky[2],[150,96,160],.5))); g.addColorStop(1,rgb(mix(now.sky[0],[52,28,84],.6)));
     rx.fillStyle=g; rx.fillRect(0,hy,W,H-hy);
     rx.strokeStyle='rgba(36,24,48,.2)'; rx.lineWidth=1; rx.beginPath();
     const rows=26;
@@ -1256,6 +1296,9 @@ function drawLand(){
   rx.clip();
   const sg=rx.createLinearGradient(0,sy-R,0,sy+R); sg.addColorStop(0,rgb(now.sun[0])); sg.addColorStop(1,rgb(now.sun[1]));
   rx.fillStyle=sg; rx.beginPath(); rx.arc(sx,sy,R,0,6.283); rx.fill();
+  // Retro-Streifen: nach unten dicker werdende Schlitze im Sonnenkörper
+  rx.fillStyle=rgb(now.sky[2]);
+  for(let i=0;i<7;i++){ const f=i/7, y=sy+R*(.02+f*.95)+(T*6%1)*0, h=1.5+f*R*.085; rx.fillRect(sx-R,y,R*2,h); }
   rx.restore();
   SUN={x:sx,y:sy,r:R};
   if(sparkA>.01){ glints.forEach(s=>{ const k=Math.max(0,Math.sin(T*2.2*s.s+s.p)); if(k<.05) return; const x=s.x*W,y=s.y*hy,L=6+10*k;
@@ -1266,6 +1309,21 @@ function drawLand(){
   drawExtra(sceneA,hy,1-sceneT); drawExtra(sceneB,hy,sceneT);
   drawSantaFlight((sceneA==='xmas'?1-sceneT:0)+(sceneB==='xmas'?sceneT:0));
   if(snowA>.01){ rx.fillStyle=`rgba(255,255,255,${.85*snowA})`; flakes.forEach(f=>{ rx.beginPath(); rx.arc(f.x*W,f.y*H,f.r,0,6.283); rx.fill(); }); }
+  neonGrade(hy);
+}
+// Neon-Grading: Violett oben, Pink am Horizont, Indigo unten; dazu leuchtende Horizontlinie
+function neonGrade(hy){
+  rx.save();
+  const g=rx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgba(60,70,220,.6)'); g.addColorStop(hy/H*.75,'rgba(214,110,210,.5)'); g.addColorStop(hy/H,'rgba(255,170,130,.55)'); g.addColorStop(hy/H+.04,'rgba(120,60,200,.5)'); g.addColorStop(1,'rgba(28,30,130,.65)');
+  rx.globalCompositeOperation='soft-light'; rx.fillStyle=g; rx.fillRect(0,0,W,H);
+  rx.globalCompositeOperation='screen';
+  const h=rx.createLinearGradient(0,hy-H*.05,0,hy+H*.04); h.addColorStop(0,'rgba(255,143,194,0)'); h.addColorStop(.55,'rgba(255,170,150,.32)'); h.addColorStop(1,'rgba(255,187,142,0)');
+  rx.fillStyle=h; rx.fillRect(0,hy-H*.05,W,H*.09);
+  rx.globalCompositeOperation='source-over';
+  rx.strokeStyle='rgba(255,200,170,.9)'; rx.lineWidth=1.5;
+  rx.beginPath(); rx.moveTo(0,hy+.5); rx.lineTo(W,hy+.5); rx.stroke();
+  rx.restore();
 }
 function drawEq(){
   ex.clearRect(0,0,EW,EH);
@@ -1363,7 +1421,7 @@ function goDark(){
   bl.style.transition=''; bl.style.transform='translate3d(0,0,0)';
   blindT=setTimeout(fin,8100);
 }
-function wake(){ clearTimeout(blindT); clearTimeout(hintT); asleep=false; document.body.classList.remove('asleep'); sdarkov.hidden=true; sdarkov.classList.remove('sd-hint','sd-done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; document.getElementById('themec').content='#2b2350'; }
+function wake(){ clearTimeout(blindT); clearTimeout(hintT); asleep=false; document.body.classList.remove('asleep'); sdarkov.hidden=true; sdarkov.classList.remove('sd-hint','sd-done'); const bl=$('#blind'); bl.style.transition='none'; bl.style.transform='translate3d(0,-101%,0)'; document.getElementById('themec').content='#1c1550'; }
 $('#sdark').addEventListener('click',goDark);
 sdarkov.addEventListener('click',wake);
 sdarkov.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') wake(); });
